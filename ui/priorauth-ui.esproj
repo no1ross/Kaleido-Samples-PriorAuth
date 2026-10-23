@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.6887863">
+  <PropertyGroup>
+    <StartupCommand>npm start</StartupCommand>
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\priorauth-ui\browser\</BuildOutputFolder>
+    <DefaultItemExcludes>$(DefaultItemExcludes);dist/**</DefaultItemExcludes>
+  </PropertyGroup>
+</Project>

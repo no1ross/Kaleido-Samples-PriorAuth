@@ -52,7 +52,7 @@ flowchart LR
 
 | Host | Role |
 |---|---|
-| Router | One entry point: the aggregated registry of every service, the MCP endpoint (`/mcp`), the dev login (`POST /auth/login`), and a reverse proxy to the services and the UI. |
+| Router | One entry point: the aggregated registry of every service, the MCP endpoint (`/mcp`), the dev login (`POST /auth/login`), and a reverse proxy to the services. The UI is a client in front of it, not served by it. |
 | Intake | The front door process: start, find the member, capture the requested service, hand off to the product process. |
 | Radiology | The product process: MRI/CT questions, providers, clinical questions, review, submit. |
 | History | One record per request with its latest snapshot; the request list in the UI and the agent's first tool. |
@@ -87,12 +87,14 @@ process state, outbox and idempotency records in a `*-process.db`.
    ```
 
 2. **Start** everything, either way:
-   - **Containers** (Production settings): `podman compose up --build` in `compose/`.
-     The router serves the UI at `http://localhost:8080`; the Aspire dashboard is at `http://localhost:18888`.
+   - **Containers** (Production settings): `podman compose up --build` in `compose/` runs the router
+     (`http://localhost:8080`) and the services; the Aspire dashboard is at `http://localhost:18888`.
    - **Locally** (Development settings): `dotnet run` the router, the services and the EventCollector
-     (projects under `src/Router/`, `src/Services/*/`, `src/EventCollector/`), and `npm start` in `ui/`.
-     Open the UI at `http://localhost:4200`, or through the router at `http://localhost:8080`.
+     (projects under `src/Router/`, `src/Services/*/`, `src/EventCollector/`).
      For traces, `npx @microsoft/aspire-cli dashboard run`.
+
+   Then run the UI, which is not containerized, either way: `npm start` in `ui/` (or Start on
+   `ui/priorauth-ui.esproj` in Visual Studio), and open `http://localhost:4200`.
 
 3. **Sign in** with a persona from the UI's persona picker (the router's dev login issues a signed
    token; nothing here is a real identity provider).
