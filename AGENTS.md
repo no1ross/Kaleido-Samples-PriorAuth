@@ -23,7 +23,7 @@
 - `package.json` `overrides` pin `vite` 7.3.7 and `@modelcontextprotocol/sdk` 1.32.1, the fixed versions that `@angular/build`/`@angular/cli` 21.2.28 depend on. **Remove both overrides when Angular is updated to 21.2.28 or later**: they would otherwise hold back the Vite and MCP SDK versions Angular asks for.
 
 ## Local run workflow
-- Prefer the compose file under `compose/` (`docker-compose.yml`; `docker-compose.override.yml` is for local overrides and sets nothing by default): it runs the router, every service and the UI as Production (see [Configuration per environment](#configuration-per-environment))
+- Prefer the compose file under `compose/` (`docker-compose.yml`; `docker-compose.override.yml` is for local overrides and sets nothing by default): it runs the router and every service as Production. The UI is not in compose and the router neither serves nor proxies it: run it with `npm start` in `ui/` (or Start on the esproj) at `http://localhost:4200` (see [Configuration per environment](#configuration-per-environment))
 - For backend-only work, `dotnet run` the affected services instead
 - If only the UI is changing, prefer running the Angular dev server directly
 - The PriorAuth seeder is now a local-only workflow; it is no longer run as a compose service

@@ -245,13 +245,6 @@ services:
     ports:
       - "8088:8080"
 
-  priorauth-ui:
-    build:
-      context: ../ui
-      dockerfile: Dockerfile
-      args:
-        BUILD_CONFIGURATION: container
-
 # The Kaleido packages come from its GitHub Packages feed: images restore them with this token,
 # a build secret (never in an image layer). Set KALEIDO_FEED_TOKEN to a GitHub token with
 # read:packages before building (README, "Run it").

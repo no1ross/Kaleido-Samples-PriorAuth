@@ -6,11 +6,12 @@ reference searches over the services' Kaleido HTTP endpoints; see
 UI follows (`ProcessService.executeStep()`).
 
 - **Backend first.** The UI only renders what the services return: run the services (or the compose
-  file under `../compose/`) before `ng serve`.
+  file under `../compose/`) before `npm start` (or Start on `priorauth-ui.esproj` in Visual Studio).
+  The UI is not containerized and the router does not serve it: it runs on its own and calls the
+  router and the services.
 - **How it reaches them** is set in `src/environments/`: `environment.ts` calls each service directly
-  on its local port (`apiMode: 'direct'`), `environment.container.ts` goes through the router
-  (`apiMode: 'router'`), as in compose. `environment.local.ts` and `environment.hybrid.ts` currently
-  re-export `environment.ts`.
+  on its local port (`apiMode: 'direct'`) and the router at `http://localhost:8080`.
+  `environment.local.ts` and `environment.hybrid.ts` currently re-export `environment.ts`.
 - **Sign in** with a dev persona (`alice`, `bob`, `carol`) at the router's `/auth/login`.
 
 The rest of this file is the Angular CLI's standard guide.
