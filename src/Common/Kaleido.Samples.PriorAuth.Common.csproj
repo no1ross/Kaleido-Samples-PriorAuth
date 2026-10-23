@@ -30,6 +30,7 @@
     <PackageReference Include="Kaleido" />
     <PackageReference Include="Kaleido.Http.Abstractions" />
     <PackageReference Include="Kaleido.Http.Client" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" />
   </ItemGroup>
 
 </Project>
