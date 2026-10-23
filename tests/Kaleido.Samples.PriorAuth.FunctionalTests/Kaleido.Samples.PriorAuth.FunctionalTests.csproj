@@ -10,6 +10,7 @@
   <ItemGroup>
     <Using Include="Kaleido.Processor" />
     <Using Include="Kaleido.Processor.Execution" />
+    <Using Include="Kaleido.Queryable.Query" />
   </ItemGroup>
 
   <!-- Every host's entry point is a global Program: each reference gets an alias to tell them apart. -->

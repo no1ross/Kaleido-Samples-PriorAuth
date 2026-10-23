@@ -58,6 +58,26 @@ public sealed class PriorAuthHosts : IAsyncLifetime
 
     public string DataRoot => _dataRoot;
 
+    /// <summary>The host of a service, by its Kaleido service name (its route prefix).</summary>
+    public IPriorAuthHost For(string service) =>
+        service switch
+        {
+            "router" => Router,
+            "referencedata" => ReferenceData,
+            "codeset" => CodeSet,
+            "provider" => Provider,
+            "member" => Member,
+            "intake" => Intake,
+            "eventcollector" => EventCollector,
+            "configuration" => Configuration,
+            "radiology" => Radiology,
+            "history" => History,
+            _ => throw new ArgumentOutOfRangeException(nameof(service), service, "Not a sample service.")
+        };
+
+    /// <summary>A client calling the services as <paramref name="persona"/> (none: anonymous).</summary>
+    public SampleClient As(Persona? persona) => new(this, persona);
+
     public async ValueTask InitializeAsync()
     {
         Directory.CreateDirectory(_dataRoot);
