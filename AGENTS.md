@@ -6,7 +6,7 @@
 
 ## PriorAuth layout
 - `compose/` contains local orchestration files
-- `ui/` is the Angular frontend
+- `ui/` is the Angular frontend; `ui/priorauth-ui.esproj` makes it a Visual Studio project (Start runs `npm start`, so `ng` need not be on PATH). The npm scripts stay the build and test commands; the CI filter leaves the esproj out
 - `src/Services/*/` are the ASP.NET Core services (targeting .NET 8); `src/Router/` is the gateway with the MCP adapter, `EventCollector/` receives the services' events, and `Seeder/` seeds the shared databases
 - `src/Common/` holds the steps, handlers, query sources, data and dev auth the services share
 

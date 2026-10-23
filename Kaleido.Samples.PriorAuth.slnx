@@ -8,7 +8,9 @@
     <File Path="AGENTS.md" />
   </Folder>
   <Folder Name="/compose/">
-    <Project Path="compose/Kaleido.Samples.PriorAuth.Compose.dcproj" Id="dfa3ef7b-d8d9-8b28-30b1-e97146d284f8" />
+    <Project Path="compose/Kaleido.Samples.PriorAuth.Compose.dcproj" Id="dfa3ef7b-d8d9-8b28-30b1-e97146d284f8">
+      <Build />
+    </Project>
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Common/Kaleido.Samples.PriorAuth.Common.csproj" />
@@ -25,5 +27,11 @@
     <Project Path="src/Services/Provider/Kaleido.Samples.PriorAuth.Provider.csproj" />
     <Project Path="src/Services/Radiology/Kaleido.Samples.PriorAuth.Radiology.csproj" />
     <Project Path="src/Services/ReferenceData/Kaleido.Samples.PriorAuth.ReferenceData.csproj" />
+  </Folder>
+  <Folder Name="/ui/">
+    <Project Path="ui/priorauth-ui.esproj">
+      <Build />
+      <Deploy />
+    </Project>
   </Folder>
 </Solution>
