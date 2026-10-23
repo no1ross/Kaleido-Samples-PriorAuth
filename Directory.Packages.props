@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <!-- One version for every Kaleido package (they ship together). -->
-        <KaleidoVersion>1.0.0-preview-0423</KaleidoVersion>
+        <KaleidoVersion>1.0.0-preview-0432</KaleidoVersion>
     </PropertyGroup>
     <ItemGroup>
         <PackageVersion Include="Kaleido" Version="$(KaleidoVersion)" />

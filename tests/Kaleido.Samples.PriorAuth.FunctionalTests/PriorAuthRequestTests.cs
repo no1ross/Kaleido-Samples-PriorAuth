@@ -11,7 +11,7 @@ namespace Kaleido.Samples.PriorAuth.FunctionalTests;
 /// <summary>A request end to end: Intake, the handoff to Radiology, submission, and History along the way.</summary>
 public sealed class PriorAuthRequestTests(PriorAuthHosts hosts)
 {
-    [Fact(Skip = "Handler calls go out as the service, not on behalf of the caller: no1ross/Kaleido#428")]
+    [Fact]
     public async Task BobSubmitsAnMriRequestFromIntakeToRadiology()
     {
         var flow = new PriorAuthFlow(hosts.As(Persona.Bob));
@@ -40,7 +40,7 @@ public sealed class PriorAuthRequestTests(PriorAuthHosts hosts)
         Assert.Equal("radiology", record.UpdatedVia);
     }
 
-    [Fact(Skip = "Handler calls go out as the service, not on behalf of the caller: no1ross/Kaleido#428")]
+    [Fact]
     public async Task HistoryHasTheRequestWhileItIsInIntake()
     {
         var flow = new PriorAuthFlow(hosts.As(Persona.Bob));
@@ -67,7 +67,7 @@ public sealed class PriorAuthRequestTests(PriorAuthHosts hosts)
         Assert.Null(call.Response?.TargetProcessorName);
     }
 
-    [Fact(Skip = "Handler calls go out as the service, not on behalf of the caller: no1ross/Kaleido#428")]
+    [Fact]
     public async Task AMemberStepIsRefusedOnceTheMriQuestionsAreAnswered()
     {
         var flow = new PriorAuthFlow(hosts.As(Persona.Bob));
