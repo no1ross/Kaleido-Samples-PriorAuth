@@ -31,6 +31,7 @@
   <Folder Name="/tests/">
     <File Path="tests/Directory.Build.props" />
     <File Path="tests/README.md" />
+    <Project Path="tests/Kaleido.Samples.PriorAuth.FunctionalTests/Kaleido.Samples.PriorAuth.FunctionalTests.csproj" />
     <Project Path="tests/Kaleido.Samples.PriorAuth.UnitTests/Kaleido.Samples.PriorAuth.UnitTests.csproj" />
   </Folder>
   <Folder Name="/ui/">

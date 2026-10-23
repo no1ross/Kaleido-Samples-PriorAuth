@@ -14,6 +14,7 @@
       "src\\Services\\Provider\\Kaleido.Samples.PriorAuth.Provider.csproj",
       "src\\Services\\Radiology\\Kaleido.Samples.PriorAuth.Radiology.csproj",
       "src\\Services\\ReferenceData\\Kaleido.Samples.PriorAuth.ReferenceData.csproj",
+      "tests\\Kaleido.Samples.PriorAuth.FunctionalTests\\Kaleido.Samples.PriorAuth.FunctionalTests.csproj",
       "tests\\Kaleido.Samples.PriorAuth.UnitTests\\Kaleido.Samples.PriorAuth.UnitTests.csproj"
     ]
   }
