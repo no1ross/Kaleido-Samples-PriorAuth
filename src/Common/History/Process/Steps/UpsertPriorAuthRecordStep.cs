@@ -1,3 +1,4 @@
+using Kaleido.Samples.PriorAuth.Compliance;
 using System.ComponentModel;
 using Kaleido.Samples.PriorAuth.Auth;
 
@@ -26,6 +27,7 @@ public sealed record UpsertPriorAuthRecordStep : IProcessStep
     public string MemberNumber { get; init; } = string.Empty;
 
     [Description("The display name of the member the request is for.")]
+    [Phi]
     public string MemberDisplayName { get; init; } = string.Empty;
 
     [Description("The date the service is planned, when known.")]

@@ -1,3 +1,4 @@
+using Kaleido.Samples.PriorAuth.Compliance;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Kaleido.Queryable;
@@ -27,6 +28,7 @@ public sealed class PriorAuthRecordQueryContext : IQueryContext
     [Searchable(Priority = 1, MatchMode = MatchMode.Contains)]
     [Sortable]
     [Description("The display name of the member the request is for.")]
+    [Phi]
     public string MemberDisplayName { get; init; } = string.Empty;
 
     [Searchable(Priority = 2, MatchMode = MatchMode.Exact)]
