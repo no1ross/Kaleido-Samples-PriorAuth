@@ -1,0 +1,16 @@
+<Project>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <Deterministic>true</Deterministic>
+        <AnalysisLevel>latest-recommended</AnalysisLevel>
+        <NuGetAudit>true</NuGetAudit>
+        <IsPackable>false</IsPackable>
+        <NoWarn>$(NoWarn);1591</NoWarn>
+        <!-- A warning fails the build. The Kaleido consumer analyzers (KAL2xxx) come with the Kaleido
+             package, as for any consumer. -->
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+</Project>

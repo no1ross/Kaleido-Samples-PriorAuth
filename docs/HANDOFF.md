@@ -45,7 +45,7 @@ The same `targetProcessorName` field is present on `GET /{processor}/processes/{
 
 ## How the handoff is implemented in Intake
 
-`Common/Intake/Process/Handlers/CaptureRequestedServiceHandler.cs`
+`src/Common/Intake/Process/Handlers/CaptureRequestedServiceHandler.cs`
 
 ```
 1. Resolve and validate the submitted procedure code through CodeSet.
@@ -60,7 +60,7 @@ The same `targetProcessorName` field is present on `GET /{processor}/processes/{
    ProcessStepHandlerResult.HandOff(processorName).
 ```
 
-The mapping lives in Configuration data (seeded from `Seeder/assets/configuration/product-code-mappings.json`), **not** in an Intake `ProcessorMappings` setting. Modality (MRI/CT) is resolved later within Radiology; it does not choose the product processor in Intake.
+The mapping lives in Configuration data (seeded from `src/Seeder/assets/configuration/product-code-mappings.json`), **not** in an Intake `ProcessorMappings` setting. Modality (MRI/CT) is resolved later within Radiology; it does not choose the product processor in Intake.
 
 Key points:
 - The contract intends to carry the same `ProcessId` through Intake and the target processor. Actual propagation is under investigation (HP-025); do not treat a successful handoff response alone as proof the target has persisted state.
@@ -72,7 +72,7 @@ Key points:
 
 ## How Radiology receives the handoff
 
-`Common/Radiology/Process/Handlers/StartRadiologyIntakeHandler.cs`
+`src/Common/Radiology/Process/Handlers/StartRadiologyIntakeHandler.cs`
 
 Radiology's `StartRadiologyIntake` handler is the dedicated entry point for handoffs from Intake. During this step it:
 
@@ -224,16 +224,16 @@ The framework handoff signal, `HandOff(processorName)`, does not require a produ
 
 ## Files involved
 
-`Common`, `Seeder`, and `priorauth-ui` paths below are relative to `samples/PriorAuth/`; `src` paths are relative to the repository root.
+Paths are relative to this repository's root; the two Kaleido files link to the [Kaleido repository](https://github.com/no1ross/Kaleido).
 
 | File | Role |
 |------|------|
-| `Common/Intake/Process/Handlers/CaptureRequestedServiceHandler.cs` | Resolves the target from the procedure code, calls the currently supported Radiology entry step, signals `HandOff(processorName)` |
-| `Common/Intake/Process/Services/ProductCodeMappingClient.cs` | Queries Configuration for a code's target processor |
-| `Seeder/assets/configuration/product-code-mappings.json` | Sample procedure-code-to-processor mapping data (currently Radiology) |
-| `Common/Radiology/Process/Steps/StartRadiologyIntakeStep.cs` | Typed entry step for the Radiology product processor |
-| `Common/Radiology/Process/Handlers/StartRadiologyIntakeHandler.cs` | Receives Intake's validated member/procedure data |
-| `src/Kaleido/Processor/Execution/ProcessStepHandler.cs` | `ProcessStepHandlerResult.HandOff(targetProcessorName)` factory |
-| `src/Kaleido.Http.Abstractions/Processor/ProcessContracts.cs` | HTTP execution and state response contracts |
-| `priorauth-ui/src/app/kaleido/services/process-service.ts` | Fetches target processor state and switches the active processor after handoff |
-| `priorauth-ui/src/configuration/serviceRoutes.ts` | Consumer service routes for target processors |
+| `src/Common/Intake/Process/Handlers/CaptureRequestedServiceHandler.cs` | Resolves the target from the procedure code, calls the currently supported Radiology entry step, signals `HandOff(processorName)` |
+| `src/Common/Intake/Process/Services/ProductCodeMappingClient.cs` | Queries Configuration for a code's target processor |
+| `src/Seeder/assets/configuration/product-code-mappings.json` | Sample procedure-code-to-processor mapping data (currently Radiology) |
+| `src/Common/Radiology/Process/Steps/StartRadiologyIntakeStep.cs` | Typed entry step for the Radiology product processor |
+| `src/Common/Radiology/Process/Handlers/StartRadiologyIntakeHandler.cs` | Receives Intake's validated member/procedure data |
+| [`Kaleido/Processor/Execution/ProcessStepHandler.cs`](https://github.com/no1ross/Kaleido/blob/master/src/Kaleido/Processor/Execution/ProcessStepHandler.cs) | `ProcessStepHandlerResult.HandOff(targetProcessorName)` factory |
+| [`Kaleido.Http.Abstractions/Processor/ProcessContracts.cs`](https://github.com/no1ross/Kaleido/blob/master/src/Kaleido.Http.Abstractions/Processor/ProcessContracts.cs) | HTTP execution and state response contracts |
+| `ui/src/app/kaleido/services/process-service.ts` | Fetches target processor state and switches the active processor after handoff |
+| `ui/src/configuration/serviceRoutes.ts` | Consumer service routes for target processors |

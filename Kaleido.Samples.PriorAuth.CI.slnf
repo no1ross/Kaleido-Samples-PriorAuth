@@ -1,0 +1,19 @@
+{
+  "solution": {
+    "path": "Kaleido.Samples.PriorAuth.slnx",
+    "projects": [
+      "src\\Common\\Kaleido.Samples.PriorAuth.Common.csproj",
+      "src\\EventCollector\\Kaleido.Samples.PriorAuth.EventCollector.csproj",
+      "src\\Router\\Kaleido.Samples.PriorAuth.Router.csproj",
+      "src\\Seeder\\Kaleido.Samples.PriorAuth.Seeder.csproj",
+      "src\\Services\\CodeSet\\Kaleido.Samples.PriorAuth.CodeSet.csproj",
+      "src\\Services\\Configuration\\Kaleido.Samples.PriorAuth.Configuration.csproj",
+      "src\\Services\\History\\Kaleido.Samples.PriorAuth.History.csproj",
+      "src\\Services\\Intake\\Kaleido.Samples.PriorAuth.Intake.csproj",
+      "src\\Services\\Member\\Kaleido.Samples.PriorAuth.Member.csproj",
+      "src\\Services\\Provider\\Kaleido.Samples.PriorAuth.Provider.csproj",
+      "src\\Services\\Radiology\\Kaleido.Samples.PriorAuth.Radiology.csproj",
+      "src\\Services\\ReferenceData\\Kaleido.Samples.PriorAuth.ReferenceData.csproj"
+    ]
+  }
+}

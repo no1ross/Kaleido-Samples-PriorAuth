@@ -1,0 +1,29 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+    <File Path="AGENTS.md" />
+  </Folder>
+  <Folder Name="/compose/">
+    <Project Path="compose/Kaleido.Samples.PriorAuth.Compose.dcproj" Id="dfa3ef7b-d8d9-8b28-30b1-e97146d284f8" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Common/Kaleido.Samples.PriorAuth.Common.csproj" />
+    <Project Path="src/EventCollector/Kaleido.Samples.PriorAuth.EventCollector.csproj" />
+    <Project Path="src/Router/Kaleido.Samples.PriorAuth.Router.csproj" />
+    <Project Path="src/Seeder/Kaleido.Samples.PriorAuth.Seeder.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/">
+    <Project Path="src/Services/CodeSet/Kaleido.Samples.PriorAuth.CodeSet.csproj" />
+    <Project Path="src/Services/Configuration/Kaleido.Samples.PriorAuth.Configuration.csproj" />
+    <Project Path="src/Services/History/Kaleido.Samples.PriorAuth.History.csproj" />
+    <Project Path="src/Services/Intake/Kaleido.Samples.PriorAuth.Intake.csproj" />
+    <Project Path="src/Services/Member/Kaleido.Samples.PriorAuth.Member.csproj" />
+    <Project Path="src/Services/Provider/Kaleido.Samples.PriorAuth.Provider.csproj" />
+    <Project Path="src/Services/Radiology/Kaleido.Samples.PriorAuth.Radiology.csproj" />
+    <Project Path="src/Services/ReferenceData/Kaleido.Samples.PriorAuth.ReferenceData.csproj" />
+  </Folder>
+</Solution>

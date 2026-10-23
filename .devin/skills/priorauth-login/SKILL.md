@@ -12,10 +12,10 @@ means that token is missing or expired.
 
 1. Run (default persona is `bob`):
    ```powershell
-   ./samples/PriorAuth/scripts/mcp-login.ps1 <alice|bob|carol>
+   ./scripts/mcp-login.ps1 <alice|bob|carol>
    ```
    If it fails to connect, the router is not running; start the full compose
-   stack under `samples/PriorAuth/Compose/` (`podman compose ...`).
+   stack under `compose/` (`podman compose ...`, README "Run it").
 2. Call `mcp_list_tools` for `priorauth` to confirm the tools are listed.
 
 Personas: `alice` (no domain role), `bob` (`radiology`), `carol` (`admin`, `radiology`).

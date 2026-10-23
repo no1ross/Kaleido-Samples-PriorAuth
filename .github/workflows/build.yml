@@ -1,0 +1,47 @@
+name: Build
+
+# Builds the services against the Kaleido preview packages and builds and tests the UI.
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # The Kaleido packages come from its GitHub Packages feed. The repository needs read access to
+  # them (each package's settings > Manage Actions access); the job's GITHUB_TOKEN then reads them.
+  packages: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+    - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68  # v6.0.0
+      with:
+        global-json-file: global.json
+
+    # The credentials apply to this command only (NuGet reads them from the environment), never to
+    # a file in the workspace.
+    - name: Restore
+      env:
+        NuGetPackageSourceCredentials_kaleido: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }}
+      run: dotnet restore Kaleido.Samples.PriorAuth.CI.slnf
+
+    - name: Build
+      run: dotnet build Kaleido.Samples.PriorAuth.CI.slnf --configuration Release --no-restore
+
+    # The runner's preinstalled Node.js.
+    - name: UI
+      working-directory: ui
+      env:
+        CI: "true"
+      run: |
+        node --version
+        npm ci
+        npm audit
+        npm run build
+        npm test -- --watch=false

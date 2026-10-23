@@ -27,9 +27,9 @@
 </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Kaleido\Kaleido.csproj" />
-    <ProjectReference Include="..\..\..\src\Kaleido.Http.Abstractions\Kaleido.Http.Abstractions.csproj" />
-    <ProjectReference Include="..\..\..\src\Kaleido.Http.Client\Kaleido.Http.Client.csproj" />
+    <PackageReference Include="Kaleido" />
+    <PackageReference Include="Kaleido.Http.Abstractions" />
+    <PackageReference Include="Kaleido.Http.Client" />
   </ItemGroup>
 
 </Project>
