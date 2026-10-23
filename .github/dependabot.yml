@@ -1,0 +1,44 @@
+# Dependency updates. Every ecosystem waits 7 days after a release before proposing it (cooldown):
+# only versions published at least a week ago are taken. Major versions are migrations, done
+# deliberately.
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directory: "/"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+      # Kaleido's preview feed needs a token Dependabot does not have: KaleidoVersion in
+      # Directory.Packages.props is raised by hand.
+      - dependency-name: "Kaleido*"
+    groups:
+      nuget:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # The Angular packages pin each other exactly: one group, so they always move together.
+  - package-ecosystem: npm
+    directory: "/ui"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      npm:
+        patterns: ["*"]

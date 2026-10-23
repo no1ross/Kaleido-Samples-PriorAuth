@@ -10,8 +10,10 @@ services:
 
   eventcollector:
     build:
-      context: ../../..
-      dockerfile: samples/PriorAuth/EventCollector/Dockerfile
+      context: ..
+      dockerfile: src/EventCollector/Dockerfile
+      secrets:
+        - nuget_token
     environment:
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__EventCollector: Data Source=/app/data/eventcollector.db
@@ -28,8 +30,10 @@ services:
 
   referencedata:
     build:
-      context: ../../..
-      dockerfile: samples/PriorAuth/Services/ReferenceData/Dockerfile
+      context: ..
+      dockerfile: src/Services/ReferenceData/Dockerfile
+      secrets:
+        - nuget_token
     depends_on:
       eventcollector:
         condition: service_healthy
@@ -49,8 +53,10 @@ services:
 
   codeset:
     build:
-      context: ../../..
-      dockerfile: samples/PriorAuth/Services/CodeSet/Dockerfile
+      context: ..
+      dockerfile: src/Services/CodeSet/Dockerfile
+      secrets:
+        - nuget_token
     depends_on:
       eventcollector:
         condition: service_healthy
@@ -70,8 +76,10 @@ services:
 
   configuration:
     build:
-      context: ../../..
-      dockerfile: samples/PriorAuth/Services/Configuration/Dockerfile
+      context: ..
+      dockerfile: src/Services/Configuration/Dockerfile
+      secrets:
+        - nuget_token
     depends_on:
       eventcollector:
         condition: service_healthy
@@ -91,8 +99,10 @@ services:
 
   provider:
     build:
-      context: ../../..
-      dockerfile: samples/PriorAuth/Services/Provider/Dockerfile
+      context: ..
+      dockerfile: src/Services/Provider/Dockerfile
+      secrets:
+        - nuget_token
     depends_on:
       eventcollector:
         condition: service_healthy
@@ -113,8 +123,10 @@ services:
 
   member:
     build:
-      context: ../../..
-      dockerfile: samples/PriorAuth/Services/Member/Dockerfile
+      context: ..
+      dockerfile: src/Services/Member/Dockerfile
+      secrets:
+        - nuget_token
     depends_on:
       eventcollector:
         condition: service_healthy
@@ -134,8 +146,10 @@ services:
 
   history:
     build:
-      context: ../../..
-      dockerfile: samples/PriorAuth/Services/History/Dockerfile
+      context: ..
+      dockerfile: src/Services/History/Dockerfile
+      secrets:
+        - nuget_token
     depends_on:
       eventcollector:
         condition: service_healthy
@@ -155,8 +169,10 @@ services:
 
   router:
     build:
-      context: ../../..
-      dockerfile: samples/PriorAuth/Router/Dockerfile
+      context: ..
+      dockerfile: src/Router/Dockerfile
+      secrets:
+        - nuget_token
     depends_on:
       referencedata:
         condition: service_healthy
@@ -179,8 +195,10 @@ services:
 
   intake:
     build:
-      context: ../../..
-      dockerfile: samples/PriorAuth/Services/Intake/Dockerfile
+      context: ..
+      dockerfile: src/Services/Intake/Dockerfile
+      secrets:
+        - nuget_token
     depends_on:
       router:
         condition: service_healthy
@@ -204,8 +222,10 @@ services:
 
   radiology:
     build:
-      context: ../../..
-      dockerfile: samples/PriorAuth/Services/Radiology/Dockerfile
+      context: ..
+      dockerfile: src/Services/Radiology/Dockerfile
+      secrets:
+        - nuget_token
     depends_on:
       router:
         condition: service_healthy
@@ -227,7 +247,14 @@ services:
 
   priorauth-ui:
     build:
-      context: ../priorauth-ui
+      context: ../ui
       dockerfile: Dockerfile
       args:
         BUILD_CONFIGURATION: container
+
+# The Kaleido packages come from its GitHub Packages feed: images restore them with this token,
+# a build secret (never in an image layer). Set KALEIDO_FEED_TOKEN to a GitHub token with
+# read:packages before building (README, "Run it").
+secrets:
+  nuget_token:
+    environment: KALEIDO_FEED_TOKEN

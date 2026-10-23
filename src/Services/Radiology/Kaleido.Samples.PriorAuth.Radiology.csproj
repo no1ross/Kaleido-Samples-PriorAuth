@@ -15,9 +15,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Kaleido.Samples.PriorAuth.Common.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Kaleido.Http\Kaleido.Http.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Kaleido.Observability.OpenTelemetry\Kaleido.Observability.OpenTelemetry.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Kaleido.Provider.SQLite\Kaleido.Provider.SQLite.csproj" />
+    <PackageReference Include="Kaleido.Http" />
+    <PackageReference Include="Kaleido.Observability.OpenTelemetry" />
+    <PackageReference Include="Kaleido.Provider.SQLite" />
   </ItemGroup>
 
   <ItemGroup>

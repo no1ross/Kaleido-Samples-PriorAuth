@@ -6,7 +6,7 @@ reference searches over the services' Kaleido HTTP endpoints; see
 UI follows (`ProcessService.executeStep()`).
 
 - **Backend first.** The UI only renders what the services return: run the services (or the compose
-  file under `../Compose/`) before `ng serve`.
+  file under `../compose/`) before `ng serve`.
 - **How it reaches them** is set in `src/environments/`: `environment.ts` calls each service directly
   on its local port (`apiMode: 'direct'`), `environment.container.ts` goes through the router
   (`apiMode: 'router'`), as in compose. `environment.local.ts` and `environment.hybrid.ts` currently

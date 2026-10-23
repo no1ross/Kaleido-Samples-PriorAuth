@@ -10,14 +10,14 @@
     "priorauth": {
       "url": "http://localhost:8080/mcp",
       "transport": "http",
-      "headers": { "Authorization": "${file:C:/Repos/Kaleido/.git/priorauth.token}" }
+      "headers": { "Authorization": "${file:<repository root>/.git/priorauth.token}" }
     }
 
   The MCP client picks up the new token on its next connection. Dev tokens
   expire; when the priorauth server shows no tools, run this again.
 
 .EXAMPLE
-  ./samples/PriorAuth/scripts/mcp-login.ps1 bob
+  ./scripts/mcp-login.ps1 bob
 #>
 param(
     [Parameter(Position = 0)]
@@ -29,7 +29,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $tokenFile = Join-Path $repoRoot '.git/priorauth.token'
 
 try {

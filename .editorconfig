@@ -1,0 +1,330 @@
+; EditorConfig to support per-solution formatting.
+; Use the EditorConfig VS add-in to make this work.
+; http://editorconfig.org/
+;
+; Here are some resources for what's supported for .NET/C#
+; https://kent-boogaart.com/blog/editorconfig-reference-for-c-developers
+; https://learn.microsoft.com/visualstudio/ide/editorconfig-code-style-settings-reference
+;
+; Be **careful** editing this because some of the rules don't support adding a severity level.
+; For instance if you change to `dotnet_sort_system_directives_first = true:warning` (adding `:warning`)
+; then the rule will be silently ignored.
+
+root = true
+
+; â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+; Universal whitespace / encoding
+; â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+[*]
+indent_style = space
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.resx]
+trim_trailing_whitespace = false
+
+[*.{xml,config,*proj,nuspec,props,resx,targets,yml,tasks}]
+indent_size = 2
+
+[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
+indent_size = 2
+
+[*.json]
+indent_size = 2
+
+[*.{ps1,psm1}]
+indent_size = 4
+
+[*.sh]
+indent_size = 4
+end_of_line = lf
+
+[*.{razor,cshtml}]
+charset = utf-8-bom
+
+; Verify snapshot files
+[*.{received,verified}.{txt,xml,json}]
+charset = utf-8-bom
+end_of_line = lf
+indent_size = unset
+indent_style = unset
+insert_final_newline = false
+tab_width = unset
+trim_trailing_whitespace = false
+
+; â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+; C# style â€” applies to all *.cs files everywhere
+; â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+[*.cs]
+indent_size = 4
+
+; Severity suffixes (#418): an option whose rule has a dotnet_diagnostic severity (below) carries no
+; ':suggestion' suffix. With the suffix, 'dotnet build' does not run the rule at all, whatever the
+; dotnet_diagnostic line says; only a build that writes an error log (Sonar's, in CI) runs it. The
+; suffixes left are on options whose rule has no dotnet_diagnostic severity.
+
+; Qualifier / predefined types
+dotnet_sort_system_directives_first = true
+dotnet_style_qualification_for_field = false:suggestion
+dotnet_style_qualification_for_property = false:suggestion
+dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
+dotnet_style_predefined_type_for_member_access = true:suggestion
+
+; var usage
+csharp_style_var_for_built_in_types = true
+csharp_style_var_when_type_is_apparent = true
+csharp_style_var_elsewhere = true
+
+; Expression / statement style
+csharp_style_throw_expression = false:suggestion
+csharp_prefer_braces = true
+
+; Newlines
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+
+; Namespace / modifier style
+csharp_style_namespace_declarations = file_scoped
+csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async
+
+; C# 12+ style (see AGENTS.md coding patterns)
+csharp_style_prefer_primary_constructors = true
+csharp_style_implicit_object_creation_when_type_is_apparent = true
+csharp_style_prefer_collection_expression = when_types_exactly_match
+csharp_style_prefer_pattern_matching = true
+
+; Naming conventions (enforced in src/: see the [src/**/*.cs] section)
+; â€” const fields: PascalCase
+dotnet_naming_rule.constant_fields_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.constant_fields_should_be_pascal_case.symbols  = constant_fields
+dotnet_naming_rule.constant_fields_should_be_pascal_case.style    = pascal_case_style
+dotnet_naming_symbols.constant_fields.applicable_kinds   = field
+dotnet_naming_symbols.constant_fields.required_modifiers = const
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+; â€” private/internal fields: _camelCase
+dotnet_naming_rule.pascal_case_for_static_fields.severity = suggestion
+dotnet_naming_rule.pascal_case_for_static_fields.symbols  = static_fields
+dotnet_naming_rule.pascal_case_for_static_fields.style    = pascal_case_style
+dotnet_naming_symbols.static_fields.applicable_kinds   = field
+dotnet_naming_symbols.static_fields.required_modifiers = static
+
+dotnet_naming_rule.camel_case_for_private_internal_fields.severity = suggestion
+dotnet_naming_rule.camel_case_for_private_internal_fields.symbols  = private_internal_fields
+dotnet_naming_rule.camel_case_for_private_internal_fields.style    = camel_case_underscore_style
+dotnet_naming_symbols.private_internal_fields.applicable_kinds = field
+dotnet_naming_symbols.private_internal_fields.applicable_accessibilities = private, internal
+dotnet_naming_style.camel_case_underscore_style.required_prefix = _
+dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
+; â€” interfaces: IPascalCase
+dotnet_naming_rule.parameters_should_be_camel_case.severity = suggestion
+dotnet_naming_rule.parameters_should_be_camel_case.symbols  = parameters
+dotnet_naming_rule.parameters_should_be_camel_case.style    = camel_case_style
+dotnet_naming_symbols.parameters.applicable_kinds = parameter
+dotnet_naming_style.camel_case_style.capitalization = camel_case
+
+dotnet_naming_rule.interfaces_should_be_i_pascal.severity = suggestion
+dotnet_naming_rule.interfaces_should_be_i_pascal.symbols  = interfaces
+dotnet_naming_rule.interfaces_should_be_i_pascal.style    = i_pascal_style
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+dotnet_naming_style.i_pascal_style.required_prefix = I
+dotnet_naming_style.i_pascal_style.capitalization = pascal_case
+
+; â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+; Diagnostic rules â€” all *.{cs,vb} (global baseline)
+; Scoped overrides appear in the per-glob sections below.
+; â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+[*.{cs,vb}]
+
+; â”€â”€ Roslyn / IDE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+dotnet_diagnostic.IDE0005.severity = warning   ; Remove unnecessary usings
+dotnet_diagnostic.IDE0011.severity = warning   ; Curly braces around blocks
+dotnet_diagnostic.IDE0020.severity = warning   ; Pattern matching (is + cast, with variable)
+dotnet_diagnostic.IDE0029.severity = warning   ; Coalesce expression (non-nullable)
+dotnet_diagnostic.IDE0030.severity = warning   ; Coalesce expression (nullable)
+dotnet_diagnostic.IDE0031.severity = warning   ; Null propagation
+dotnet_diagnostic.IDE0035.severity = warning   ; Remove unreachable code
+dotnet_diagnostic.IDE0036.severity = warning   ; Order modifiers
+dotnet_diagnostic.IDE0038.severity = warning   ; Pattern matching (is + cast, no variable)
+dotnet_diagnostic.IDE0043.severity = warning   ; Invalid format string placeholder
+dotnet_diagnostic.IDE0044.severity = warning   ; Make field readonly
+dotnet_diagnostic.IDE0051.severity = warning   ; Remove unused private members
+dotnet_diagnostic.IDE0055.severity = warning ; All formatting rules (enforced, #257)
+dotnet_diagnostic.IDE0059.severity = warning   ; Unnecessary assignment
+dotnet_diagnostic.IDE0060.severity = warning   ; Remove unused parameter
+dotnet_code_quality_unused_parameters = non_public
+dotnet_diagnostic.IDE0062.severity = warning   ; Make local function static
+dotnet_diagnostic.IDE0130.severity = warning   ; Namespace must match folder structure
+dotnet_diagnostic.IDE0161.severity = error     ; Convert to file-scoped namespace
+dotnet_diagnostic.IDE0200.severity = warning   ; Lambda expression can be removed
+dotnet_diagnostic.IDE0290.severity = warning   ; Use primary constructor
+dotnet_diagnostic.IDE2000.severity = warning   ; Disallow multiple blank lines
+dotnet_style_allow_multiple_blank_lines_experimental = false
+
+
+; â”€â”€ .NET / CA: naming & design â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+dotnet_diagnostic.CA1018.severity = warning   ; Mark attributes with AttributeUsageAttribute
+dotnet_diagnostic.CA1047.severity = warning   ; Do not declare protected member in sealed type
+dotnet_diagnostic.CA1305.severity = warning   ; Specify IFormatProvider
+dotnet_diagnostic.CA1507.severity = warning   ; Use nameof to express symbol names
+dotnet_diagnostic.CA1510.severity = warning   ; Use ArgumentNullException throw helper
+dotnet_diagnostic.CA1511.severity = warning   ; Use ArgumentException throw helper
+dotnet_diagnostic.CA1512.severity = warning   ; Use ArgumentOutOfRangeException throw helper
+dotnet_diagnostic.CA1513.severity = warning   ; Use ObjectDisposedException throw helper
+dotnet_diagnostic.CA1725.severity = suggestion ; Parameter names should match base declaration
+dotnet_diagnostic.CA1802.severity = warning   ; Use literals where appropriate
+dotnet_diagnostic.CA1805.severity = warning   ; Do not initialize unnecessarily
+dotnet_diagnostic.CA1810.severity = warning   ; Do not initialize unnecessarily (static ctor)
+dotnet_diagnostic.CA1821.severity = warning   ; Remove empty finalizers
+dotnet_diagnostic.CA1822.severity = warning   ; Make member static
+dotnet_code_quality.CA1822.api_surface = private, internal
+dotnet_diagnostic.CA1823.severity = warning   ; Avoid unused private fields
+dotnet_diagnostic.CA1825.severity = warning   ; Avoid zero-length array allocations
+dotnet_diagnostic.CA1826.severity = suggestion ; Don't use Enumerable on indexable collections
+dotnet_diagnostic.CA1827.severity = warning   ; Don't use Count() when Any() works
+dotnet_diagnostic.CA1828.severity = warning   ; Don't use CountAsync() when AnyAsync() works
+dotnet_diagnostic.CA1829.severity = warning   ; Use Length/Count instead of Count()
+dotnet_diagnostic.CA1830.severity = warning   ; Prefer typed Append/Insert on StringBuilder
+dotnet_diagnostic.CA1831.severity = warning   ; Use AsSpan/AsMemory over Range indexers
+dotnet_diagnostic.CA1832.severity = warning   ; Use AsSpan/AsMemory over Range indexers
+dotnet_diagnostic.CA1833.severity = warning   ; Use AsSpan/AsMemory over Range indexers
+dotnet_diagnostic.CA1834.severity = warning   ; Use StringBuilder.Append(char) where applicable
+dotnet_diagnostic.CA1835.severity = warning   ; Prefer Memory-based ReadAsync/WriteAsync
+dotnet_diagnostic.CA1836.severity = warning   ; Prefer IsEmpty over Count
+dotnet_diagnostic.CA1837.severity = warning   ; Use Environment.ProcessId
+dotnet_diagnostic.CA1838.severity = warning   ; Avoid StringBuilder P/Invoke params
+dotnet_diagnostic.CA1839.severity = warning   ; Use Environment.ProcessPath
+dotnet_diagnostic.CA1840.severity = warning   ; Use Environment.CurrentManagedThreadId
+dotnet_diagnostic.CA1841.severity = warning   ; Prefer Dictionary.Contains methods
+dotnet_diagnostic.CA1842.severity = warning   ; Don't use WhenAll with a single task
+dotnet_diagnostic.CA1843.severity = warning   ; Don't use WaitAll with a single task
+dotnet_diagnostic.CA1844.severity = warning   ; Provide memory-based overrides on Stream
+dotnet_diagnostic.CA1845.severity = warning   ; Use span-based string.Concat
+dotnet_diagnostic.CA1846.severity = warning   ; Prefer AsSpan over Substring
+dotnet_diagnostic.CA1847.severity = warning   ; Use string.Contains(char) for single chars
+dotnet_diagnostic.CA1848.severity = warning    ; Log through [LoggerMessage] methods (static partial Log<Event> on the class)
+dotnet_diagnostic.IDE0090.severity = warning    ; 'new()' when the type is apparent
+dotnet_diagnostic.CA1852.severity = warning   ; Seal internal types
+dotnet_diagnostic.CA1854.severity = warning   ; Prefer TryGetValue over ContainsKey+indexer
+dotnet_diagnostic.CA1855.severity = warning   ; Prefer Clear over Fill
+dotnet_diagnostic.CA1856.severity = error     ; Incorrect usage of ConstantExpected attribute
+dotnet_diagnostic.CA1857.severity = warning   ; Constant expected for parameter
+dotnet_diagnostic.CA1858.severity = warning   ; Use StartsWith instead of IndexOf
+dotnet_diagnostic.CA1859.severity = warning ; Use concrete types for non-public members (enforced, #257; lookups are FrozenDictionary)
+dotnet_diagnostic.CA1873.severity = warning    ; No log argument evaluated for a disabled level
+dotnet_diagnostic.CA2007.severity = silent    ; ConfigureAwait â€” supported hosts have no SynchronizationContext; consumers must not block on Kaleido async APIs (docs/PATTERNS.md â†’ Async)
+dotnet_diagnostic.CA2008.severity = warning   ; Do not create tasks without TaskScheduler
+dotnet_diagnostic.CA2009.severity = warning   ; Don't call ToImmutableCollection on ImmutableCollection
+dotnet_diagnostic.CA2011.severity = warning   ; Avoid infinite recursion
+dotnet_diagnostic.CA2012.severity = warning   ; Use ValueTask correctly
+dotnet_diagnostic.CA2013.severity = warning   ; Don't use ReferenceEquals with value types
+dotnet_diagnostic.CA2014.severity = warning   ; Don't use stackalloc in loops
+dotnet_diagnostic.CA2016.severity = warning   ; Forward CancellationToken to methods that take one
+dotnet_diagnostic.CA2022.severity = warning   ; Avoid inexact read with Stream.Read
+dotnet_diagnostic.CA2200.severity = warning   ; Rethrow to preserve stack details
+dotnet_diagnostic.CA2201.severity = warning   ; Do not raise reserved exception types
+dotnet_diagnostic.CA2208.severity = warning   ; Instantiate argument exceptions correctly
+dotnet_diagnostic.CA2245.severity = warning   ; Do not assign a property to itself
+dotnet_diagnostic.CA2246.severity = warning   ; Assigning symbol and its member in same statement
+dotnet_diagnostic.CA2249.severity = warning   ; Use string.Contains instead of IndexOf
+dotnet_diagnostic.CA2263.severity = warning   ; Prefer generic overload (non-generic exercises Type args)
+
+; CA1000: no static members on generic types - typed step results are created through the non-generic
+; ProcessStepHandlerResult factories, which infer the response type (#264)
+dotnet_diagnostic.CA1000.severity = warning
+
+; SYSLIB1054: Use LibraryImportAttribute instead of DllImportAttribute
+dotnet_diagnostic.SYSLIB1054.severity = warning
+
+; â”€â”€ Meziantou / Roslynator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+dotnet_diagnostic.MA0002.severity = warning   ; Use IEqualityComparer/IComparer overload
+dotnet_diagnostic.MA0004.severity = none      ; StringComparison â€” CA1862 covers the real cases
+dotnet_diagnostic.MA0006.severity = warning   ; Use string.Equals for ordinal comparisons
+dotnet_diagnostic.MA0016.severity = warning   ; Prefer collection abstraction over concrete type
+dotnet_diagnostic.MA0037.severity = warning    ; Remove empty statements (enforced, #257)
+dotnet_diagnostic.MA0048.severity = none ; File name must match type name - off: small related types (data records, an interface and its implementation) share a file on purpose; a type with behavior gets its own file through KAL0019 (#404)
+dotnet_diagnostic.MA0051.severity = warning    ; Method is too long (over 60 lines): split it into named steps
+
+; RCS1194: Kaleido exceptions require a 'code' parameter by design â€” the BCL
+; ctor triad would allow Code-less instances, breaking the hierarchy's invariant
+dotnet_diagnostic.RCS1194.severity = none
+
+; Enforced after every finding was fixed (#257) - the build blocks them from returning
+dotnet_diagnostic.MA0007.severity = warning    ; Trailing comma after the last value (multi-line)
+dotnet_diagnostic.MA0029.severity = warning    ; Combine Where with Where
+dotnet_diagnostic.MA0052.severity = warning    ; nameof instead of a constant Enum.ToString
+dotnet_diagnostic.MA0206.severity = warning    ; No unnecessary braces in a type declaration
+dotnet_diagnostic.RCS1015.severity = warning   ; nameof operator
+dotnet_diagnostic.RCS1021.severity = warning   ; Expression-bodied lambda
+dotnet_diagnostic.RCS1037.severity = warning   ; No trailing white-space
+dotnet_diagnostic.RCS1112.severity = warning   ; Combine Enumerable.Where chains
+dotnet_diagnostic.RCS1146.severity = warning   ; Conditional access
+dotnet_diagnostic.RCS1199.severity = warning   ; No unnecessary null check
+dotnet_diagnostic.RCS1214.severity = warning   ; No unnecessary interpolated string
+dotnet_diagnostic.RCS1251.severity = warning   ; No unnecessary braces
+dotnet_diagnostic.RCS1259.severity = warning   ; No empty statement
+dotnet_diagnostic.CA1826.severity = warning    ; Indexer instead of Enumerable methods on indexable collections
+dotnet_diagnostic.IDE0007.severity = warning   ; var
+dotnet_diagnostic.IDE0028.severity = warning   ; Collection initializer / expression (exact target types only, see csharp_style_prefer_collection_expression)
+dotnet_diagnostic.IDE0037.severity = warning   ; Inferred member names
+dotnet_diagnostic.IDE0078.severity = warning   ; Pattern matching
+dotnet_diagnostic.MA0001.severity = warning    ; StringComparison on string methods
+dotnet_diagnostic.MA0040.severity = warning    ; Pass the CancellationToken on when one is available
+dotnet_diagnostic.MA0003.severity = warning    ; Name boolean/null arguments
+dotnet_diagnostic.MA0020.severity = warning    ; Find instead of FirstOrDefault on List
+dotnet_diagnostic.MA0031.severity = warning    ; Count() comparisons without enumerating everything
+dotnet_diagnostic.MA0076.severity = warning    ; No implicit culture-sensitive ToString in interpolated strings
+dotnet_diagnostic.MA0089.severity = warning    ; char overloads
+dotnet_diagnostic.MA0106.severity = warning    ; No closure where a factory-argument overload exists
+dotnet_diagnostic.MA0133.severity = warning    ; DateTimeOffset instead of implicit DateTime conversion
+dotnet_diagnostic.MA0154.severity = warning    ; langword in XML comments
+dotnet_diagnostic.MA0179.severity = warning    ; Attribute.IsDefined
+dotnet_diagnostic.RCS1085.severity = warning   ; Auto-implemented property
+dotnet_diagnostic.RCS1205.severity = warning   ; Named arguments in parameter order
+dotnet_diagnostic.RCS1226.severity = warning   ; Paragraphs in documentation comments
+dotnet_diagnostic.RCS1247.severity = warning   ; Documentation tags: <code> on its own lines, <c> inline
+dotnet_diagnostic.MA0182.severity = warning    ; Unused internal type (off in Kaleido.Http.Abstractions, below)
+; Off, with the reason
+dotnet_diagnostic.MA0190.severity = none       ; Partial property for GeneratedRegex - the net8.0 regex generator supports partial methods only
+dotnet_diagnostic.MA0038.severity = none       ; Deprecated duplicate of CA1822 (enforced above); misreports primary-constructor members as static
+dotnet_diagnostic.MA0041.severity = none       ; Deprecated duplicate of CA1822 (enforced above); flags members that are instance by design (an exception's Code)
+dotnet_diagnostic.MA0018.severity = none       ; Deprecated duplicate of CA1000
+
+
+; The sample keeps the relaxed style it had in the Kaleido repository: these rules stay suggestions.
+[{src,tests}/**/*.cs]
+dotnet_diagnostic.IDE0090.severity = suggestion
+dotnet_diagnostic.CA1848.severity = suggestion
+dotnet_diagnostic.CA1873.severity = suggestion
+dotnet_diagnostic.MA0051.severity = suggestion
+dotnet_diagnostic.RCS1247.severity = suggestion
+dotnet_diagnostic.CA1000.severity = suggestion
+dotnet_diagnostic.CA1859.severity = suggestion
+dotnet_diagnostic.CA1826.severity = suggestion
+dotnet_diagnostic.IDE0007.severity = suggestion
+dotnet_diagnostic.IDE0028.severity = suggestion
+dotnet_diagnostic.IDE0037.severity = suggestion
+dotnet_diagnostic.IDE0078.severity = suggestion
+dotnet_diagnostic.MA0001.severity = suggestion
+dotnet_diagnostic.MA0040.severity = suggestion
+dotnet_diagnostic.MA0003.severity = suggestion
+dotnet_diagnostic.MA0020.severity = suggestion
+dotnet_diagnostic.MA0031.severity = suggestion
+dotnet_diagnostic.MA0076.severity = suggestion
+dotnet_diagnostic.MA0089.severity = suggestion
+dotnet_diagnostic.MA0106.severity = suggestion
+dotnet_diagnostic.MA0133.severity = suggestion
+dotnet_diagnostic.MA0154.severity = suggestion
+dotnet_diagnostic.MA0179.severity = suggestion
+dotnet_diagnostic.MA0182.severity = suggestion
+dotnet_diagnostic.RCS1085.severity = suggestion
+dotnet_diagnostic.RCS1205.severity = suggestion
+dotnet_diagnostic.RCS1226.severity = suggestion
+dotnet_diagnostic.KAL2021.severity = error

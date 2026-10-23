@@ -1,13 +1,22 @@
 # Prior authorization sample
 
-A prior-authorization intake built with Kaleido: a caller identifies a member, says what imaging
+A prior-authorization intake built with [Kaleido](https://github.com/no1ross/Kaleido): a caller identifies a member, says what imaging
 service is needed, and the request moves from a generic **Intake** process to the **Radiology**
 process that owns it, through the questions Radiology needs, to submission. The same steps serve a
 web UI, an AI agent over MCP, and service-to-service calls.
 
 This README is a short walkthrough. The conventions and details live in
 [`AGENTS.md`](AGENTS.md) (auth model, history, audit fields, configuration, ports) and
-[`HANDOFF.md`](HANDOFF.md) (the cross-processor handoff, backend and UI).
+[`docs/HANDOFF.md`](docs/HANDOFF.md) (the cross-processor handoff, backend and UI).
+
+| Folder | Holds |
+|---|---|
+| `src/` | the services (`Services/*`), the router, the EventCollector, the seeder, and `Common` (the steps, handlers, query sources, data and dev auth they share) |
+| `ui/` | the Angular app |
+| `compose/` | the compose files for running everything in containers |
+| `docs/` | design notes (the handoff) |
+| `tests/` | tests, when there are any |
+| `data/` | the SQLite databases, created at runtime (not committed) |
 
 ## What runs
 
@@ -55,17 +64,33 @@ process state, outbox and idempotency records in a `*-process.db`.
 
 ## Run it
 
+0. **Get the Kaleido packages.** The sample uses Kaleido's preview packages from its GitHub Packages
+   feed (`nuget.config`). The feed needs a GitHub **classic** personal access token with
+   `read:packages`, even though the packages are public (GitHub Settings > Developer settings >
+   Personal access tokens > Tokens (classic)). Add it to your user-level NuGet configuration, never
+   to a file in this repository; `Read-Host` keeps it off the command line:
+
+   ```powershell
+   $t = Read-Host 'token' -MaskInput
+   dotnet nuget add source https://nuget.pkg.github.com/no1ross/index.json --name kaleido --username <your GitHub user> --password $t
+   Remove-Variable t
+   ```
+
+   For the containers, set `KALEIDO_FEED_TOKEN` to the same token before `podman compose up --build`:
+   the images restore with it as a build secret, never stored in an image. Building needs the .NET 9 SDK
+   (`global.json`).
+
 1. **Seed** the shared reference databases (once, and after reference data changes):
 
    ```powershell
-   dotnet run --project samples/PriorAuth/Seeder/Kaleido.Samples.PriorAuth.Seeder.csproj -- --domains=ReferenceData,CodeSet,Configuration,ProviderSearch,MemberService
+   dotnet run --project src/Seeder/Kaleido.Samples.PriorAuth.Seeder.csproj -- --domains=ReferenceData,CodeSet,Configuration,ProviderSearch,MemberService
    ```
 
 2. **Start** everything, either way:
-   - **Containers** (Production settings): `podman compose up --build` in `samples/PriorAuth/Compose/`.
+   - **Containers** (Production settings): `podman compose up --build` in `compose/`.
      The router serves the UI at `http://localhost:8080`; the Aspire dashboard is at `http://localhost:18888`.
    - **Locally** (Development settings): `dotnet run` the router, the services and the EventCollector
-     (projects under `Router/`, `Services/*/`, `EventCollector/`), and `npm start` in `priorauth-ui/`.
+     (projects under `src/Router/`, `src/Services/*/`, `src/EventCollector/`), and `npm start` in `ui/`.
      Open the UI at `http://localhost:4200`, or through the router at `http://localhost:8080`.
      For traces, `npx @microsoft/aspire-cli dashboard run`.
 
@@ -98,7 +123,7 @@ Signed in as bob, in the UI or through an agent:
 |---|---|---|---|
 | 1 | Intake | Start | A process is created; its id travels on every later call, searches included. |
 | 2 | Intake | Validate Member, Capture Member | The member comes from a lookup over the Member search (name, member ID, date of birth); the caller picks the match. |
-| 3 | Intake | Capture Requested Service | The procedure code decides the product (Configuration's routing rules): an imaging code hands the request to **Radiology** with the same process id. The response names the target processor; the consumer reads Radiology's state next ([`HANDOFF.md`](HANDOFF.md)). |
+| 3 | Intake | Capture Requested Service | The procedure code decides the product (Configuration's routing rules): an imaging code hands the request to **Radiology** with the same process id. The response names the target processor; the consumer reads Radiology's state next ([`docs/HANDOFF.md`](docs/HANDOFF.md)). |
 | 4 | Radiology | Capture MRI Information, or Confirm CT Instead Of MRI | An **information request**: Radiology asks the questions configured for the service (some only when an earlier answer makes them apply). The UI shows a form; an agent asks the user round by round. |
 | 5 | Radiology | Capture Requesting Provider, Capture Servicing Provider | Providers come from searches that only Radiology may call; Radiology publishes them to the caller as views over those internal searches. |
 | 6 | Radiology | Capture Clinical Information | Clinical questions, when the service requires them. |
@@ -116,7 +141,7 @@ EventCollector with PHI removed.
 ## Connect an AI agent
 
 The router's MCP endpoint is `http://localhost:8080/mcp`. It needs a persona's token:
-`./samples/PriorAuth/scripts/mcp-login.ps1 bob` signs in and stores the token where the
+`./scripts/mcp-login.ps1 bob` signs in and stores the token where the
 repository's MCP configuration reads it. The agent starts with a short list of tools (the request
 list and the entry steps); the next steps, their inputs and the searches they need arrive with each
 response as the process moves on.
@@ -124,6 +149,6 @@ response as the process moves on.
 ## More
 
 - [`AGENTS.md`](AGENTS.md): conventions, auth model, history recording, audit fields, configuration per environment, ports
-- [`HANDOFF.md`](HANDOFF.md): the Intake to Radiology handoff, its contract and the UI's handling
-- [Consumer guide](../../docs/guide/README.md): Kaleido's concepts with a smaller, tested example
-- [MCP adapter](../../src/Kaleido.Http.Mcp/README.md): tool listing, information requests over MCP
+- [`docs/HANDOFF.md`](docs/HANDOFF.md): the Intake to Radiology handoff, its contract and the UI's handling
+- [Kaleido](https://github.com/no1ross/Kaleido) and its [consumer guide](https://github.com/no1ross/Kaleido/blob/master/docs/guide/README.md): Kaleido's concepts with a smaller, tested example
+- [MCP adapter](https://github.com/no1ross/Kaleido/blob/master/src/Kaleido.Http.Mcp/README.md): tool listing, information requests over MCP
