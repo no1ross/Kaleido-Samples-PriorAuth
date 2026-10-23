@@ -45,6 +45,14 @@ public sealed class SampleClient(PriorAuthHosts hosts, Persona? persona)
 
     public async Task<QueryResults> QueryAsync(string service, string source, string? view = null, object? parameters = null, QueryApiBody? query = null)
     {
+        var call = await TryQueryAsync(service, source, view, parameters, query);
+
+        return call.Results ?? throw new InvalidOperationException($"Query {service}/{source}/{view} answered {call.Status}: {call.Raw}");
+    }
+
+    /// <summary>A query that may be refused: its status, and its results when it succeeded.</summary>
+    public async Task<(HttpStatusCode Status, QueryResults? Results, string Raw)> TryQueryAsync(string service, string source, string? view = null, object? parameters = null, QueryApiBody? query = null)
+    {
         var path = view is null
             ? $"/{service}/queryable/{source.ToLowerInvariant()}/query"
             : $"/{service}/queryable/{source.ToLowerInvariant()}/{view.ToLowerInvariant()}/query";
@@ -54,9 +62,7 @@ public sealed class SampleClient(PriorAuthHosts hosts, Persona? persona)
             Content = JsonContent.Create(new { parameters = parameters ?? new { }, query = query ?? new QueryApiBody() }, options: Json)
         };
 
-        var call = await SendAsync<QueryResults>(service, request);
-
-        return call.Body ?? throw new InvalidOperationException($"Query {path} answered {call.Status}: {call.Raw}");
+        return await SendAsync<QueryResults>(service, request);
     }
 
     private async Task<(HttpStatusCode Status, T? Body, string Raw)> SendAsync<T>(string service, HttpRequestMessage request)

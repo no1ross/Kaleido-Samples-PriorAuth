@@ -87,6 +87,23 @@ public sealed class PriorAuthRequestTests(PriorAuthHosts hosts)
     }
 
     [Fact]
+    public async Task ACtRequestAsksToConfirmTheCt()
+    {
+        var flow = new PriorAuthFlow(hosts.As(Persona.Carol));
+        await flow.StartWithMemberAsync();
+        (await flow.CaptureServiceAsync("70450")).Completed.ToString();
+
+        var request = await flow.RequiredInformationAsync(nameof(RadiologySteps.ConfirmCtInsteadOfMriStep));
+        var confirmed = (await flow.Client.ExecuteAsync("radiology", new RadiologySteps.ConfirmCtInsteadOfMriStep
+        {
+            InformationRequestId = request.InformationRequestId,
+            Items = Answers.For(request, ("ConfirmCt", "true"))
+        })).Completed;
+
+        Assert.Contains(confirmed.AvailableSteps, x => x.Name == nameof(RadiologySteps.CaptureRequestingProviderStep));
+    }
+
+    [Fact]
     public async Task AnAnonymousCallerIsRefused()
     {
         var call = await hosts.As(null).ExecuteAsync("intake", new IntakeSteps.StartIntakeStep());
