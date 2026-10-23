@@ -11,5 +11,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Common\Kaleido.Samples.PriorAuth.Common.csproj" />
+    <ProjectReference Include="..\..\src\Seeder\Kaleido.Samples.PriorAuth.Seeder.csproj" />
   </ItemGroup>
 </Project>
