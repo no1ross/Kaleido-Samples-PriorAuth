@@ -28,6 +28,11 @@
     <Project Path="src/Services/Radiology/Kaleido.Samples.PriorAuth.Radiology.csproj" />
     <Project Path="src/Services/ReferenceData/Kaleido.Samples.PriorAuth.ReferenceData.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <File Path="tests/Directory.Build.props" />
+    <File Path="tests/README.md" />
+    <Project Path="tests/Kaleido.Samples.PriorAuth.UnitTests/Kaleido.Samples.PriorAuth.UnitTests.csproj" />
+  </Folder>
   <Folder Name="/ui/">
     <Project Path="ui/priorauth-ui.esproj">
       <Build />

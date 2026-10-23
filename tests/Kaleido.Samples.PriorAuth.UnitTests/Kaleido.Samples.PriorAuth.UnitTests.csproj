@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Kaleido.Samples.PriorAuth.UnitTests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="Kaleido.Processor" />
+    <Using Include="Kaleido.Processor.Execution" />
+    <Using Include="Kaleido.Queryable.Query" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Common\Kaleido.Samples.PriorAuth.Common.csproj" />
+  </ItemGroup>
+</Project>
