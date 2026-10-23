@@ -9,10 +9,12 @@
 - `ui/` is the Angular frontend; `ui/priorauth-ui.esproj` makes it a Visual Studio project (Start runs `npm start`, so `ng` need not be on PATH). The npm scripts stay the build and test commands; the CI filter leaves the esproj out
 - `src/Services/*/` are the ASP.NET Core services (targeting .NET 8); `src/Router/` is the gateway with the MCP adapter, `EventCollector/` receives the services' events, and `Seeder/` seeds the shared databases
 - `src/Common/` holds the steps, handlers, query sources, data and dev auth the services share
+- `tests/` holds the unit tests (`Kaleido.Samples.PriorAuth.UnitTests`) and the functional tests that run the whole sample in-process (`Kaleido.Samples.PriorAuth.FunctionalTests`)
 
 ## Verification
 - For backend changes, prefer `dotnet build` on the affected project
-- Run `dotnet test` for any affected backend test projects
+- Run the backend tests: `dotnet test Kaleido.Samples.PriorAuth.CI.slnf` (both test projects; CI runs the same). See [`tests/README.md`](tests/README.md)
+- A change in a step, handler, query or setting comes with its test: a unit test for its logic, a functional test when it changes what a caller sees across services
 - For UI changes, run from `ui/`:
   - `npm test`
   - `npm run build`
