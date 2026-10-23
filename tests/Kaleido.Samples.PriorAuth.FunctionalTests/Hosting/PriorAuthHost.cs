@@ -60,9 +60,14 @@ public sealed class PriorAuthHost<TEntryPoint>(
     }
 }
 
-/// <summary>Sends a request to the in-process host listening on the request's port.</summary>
+/// <summary>
+/// Sends a request to the in-process host listening on the request's port. Only localhost: the
+/// Development settings name every host there, so another host (a container address) is a mistake.
+/// </summary>
 public sealed class HostRouter(PriorAuthHosts hosts) : HttpMessageHandler
 {
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) =>
-        hosts.InvokerFor(request.RequestUri?.Port ?? 0).SendAsync(request, cancellationToken);
+        request.RequestUri is { Host: "localhost", Port: var port }
+            ? hosts.InvokerFor(port).SendAsync(request, cancellationToken)
+            : throw new InvalidOperationException($"{request.RequestUri} is not a localhost address: the Development settings call every host on localhost.");
 }
