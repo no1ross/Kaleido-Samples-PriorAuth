@@ -10,6 +10,8 @@ export interface PriorAuthRecordView {
     dateOfService?: string;
     primaryProcedureCode: string;
     primaryProcedureDescription: string;
+    /** Whether the servicing facility is in network (false: out of network); absent until a facility is chosen. */
+    servicingProviderInNetwork?: boolean | null;
     createdUtc: string;
     updatedUtc: string;
 }

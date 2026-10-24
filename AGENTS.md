@@ -76,6 +76,13 @@
 - Kaleido decides which questions apply ([ADR 0024](https://github.com/no1ross/Kaleido/blob/master/docs/decisions/0024-conditional-questions.md)). The MCP adapter asks them round by round, and the UI (`information-conditions.ts`) shows a question once it applies and never sends the answers of the others.
 - A handler gets no answer for a question that did not apply. `CaptureMriInfoHandler` reads a missing Laterality (BodyPart Spine) as `Laterality.None`.
 
+## Out-of-network facilities
+- When the servicing facility chosen in Capture Servicing Provider is out of network, Radiology requires `CaptureOutOfNetworkInfoStep` with the questionnaire configured for that step (Seeder `questionnaire-definitions.json`, `priorauth-out-of-network`: the reason, a description when the reason is Other, and that the member was told about possible costs), then the clinical questions. An in-network facility goes straight to the clinical questions; with no questionnaire configured, none are asked.
+- The answers are kept like every configured questionnaire's and show in Review. Whatever they are, the request goes on to review: the reviewer decides (#12).
+- History records the facility's network status (`ServicingProviderInNetwork`: null until a facility is chosen); the UI's History list shows it.
+- While the questions are pending only they run (a required step), so the facility cannot be changed until they are answered.
+- After pulling this change: delete `history.db` (new column, `EnsureCreated`), and run the seeder for `Configuration` (the new questionnaire).
+
 ## Counting query results
 - Every service whose query sources read an EF Core database (CodeSet, Configuration, History, Member, Provider, ReferenceData, Radiology) calls `AddPriorAuthEfCoreQueries()` (`src/Common/Queryable`): a full page is counted with one `SELECT COUNT(*)` instead of reading every matching row (visible in the EF command log in Aspire). Kaleido's default executor counts an async query by enumerating it ([PATTERNS](https://github.com/no1ross/Kaleido/blob/master/docs/PATTERNS.md), no1ross/Kaleido#352).
 - The executor serves every source of the service: a query that is not EF Core's (Radiology's delegated provider searches) uses LINQ.

@@ -48,6 +48,10 @@ public sealed class PriorAuthRecordQueryContext : IQueryContext
     [Description("A readable description of the main service requested.")]
     public string PrimaryProcedureDescription { get; init; } = string.Empty;
 
+    [Filterable(FilterOperator.Equals, FilterOperator.IsNull)]
+    [Description("Whether the servicing facility is in the member's network; empty until a facility is chosen.")]
+    public bool? ServicingProviderInNetwork { get; init; }
+
     [Sortable]
     [Description("When the record was first created, in UTC.")]
     public DateTimeOffset CreatedUtc { get; init; }

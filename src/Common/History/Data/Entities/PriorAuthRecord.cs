@@ -28,6 +28,9 @@ public sealed class PriorAuthRecord : IAuditable
 
     public string PrimaryProcedureDescription { get; set; } = string.Empty;
 
+    /// <summary>Whether the servicing facility is in network; null until a facility is chosen.</summary>
+    public bool? ServicingProviderInNetwork { get; set; }
+
     /// <inheritdoc />
     public string CreatedBy { get; set; } = string.Empty;
 

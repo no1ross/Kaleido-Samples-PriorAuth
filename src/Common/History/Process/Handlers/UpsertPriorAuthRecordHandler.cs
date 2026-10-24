@@ -51,6 +51,7 @@ public sealed class UpsertPriorAuthRecordHandler(
         record.DateOfService = processStep.DateOfService;
         record.PrimaryProcedureCode = processStep.PrimaryProcedureCode;
         record.PrimaryProcedureDescription = processStep.PrimaryProcedureDescription;
+        record.ServicingProviderInNetwork = processStep.ServicingProviderInNetwork;
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

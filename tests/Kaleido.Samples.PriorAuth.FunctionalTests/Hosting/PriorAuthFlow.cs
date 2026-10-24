@@ -81,6 +81,18 @@ public sealed class PriorAuthFlow(SampleClient client)
         })).Completed;
     }
 
+    /// <summary>Answers the out-of-network questions Radiology requires after an out-of-network facility.</summary>
+    public async Task<StepExecutionResponse<JsonElement>> AnswerOutOfNetworkQuestionsAsync(params (string ItemId, string Value)[] answers)
+    {
+        var request = await RequiredInformationAsync(nameof(RadiologySteps.CaptureOutOfNetworkInfoStep));
+
+        return (await client.ExecuteAsync("radiology", new RadiologySteps.CaptureOutOfNetworkInfoStep
+        {
+            InformationRequestId = request.InformationRequestId,
+            Items = Answers.For(request, answers)
+        })).Completed;
+    }
+
     /// <summary>Answers every clinical round (X-ray done, no red flags) until the clinical review is done.</summary>
     public async Task AnswerClinicalQuestionsAsync()
     {
@@ -95,9 +107,12 @@ public sealed class PriorAuthFlow(SampleClient client)
     }
 
     /// <summary>Reviews the request and confirms the attestation.</summary>
-    public async Task<StepExecutionResponse<JsonElement>> ReviewAndSubmitAsync()
+    public async Task<StepExecutionResponse<JsonElement>> ReviewAndSubmitAsync() =>
+        await SubmitAsync((await client.ExecuteAsync("radiology", new RadiologySteps.ReviewPriorAuthorizationStep())).Completed);
+
+    /// <summary>Confirms the attestation <paramref name="review"/> presented.</summary>
+    public async Task<StepExecutionResponse<JsonElement>> SubmitAsync(StepExecutionResponse<JsonElement> review)
     {
-        var review = (await client.ExecuteAsync("radiology", new RadiologySteps.ReviewPriorAuthorizationStep())).Completed;
         var attestation = review.RequiredStep?.InformationRequest ?? throw new InvalidOperationException("Review required no attestation.");
 
         return (await client.ExecuteAsync("radiology", new RadiologySteps.SubmitPriorAuthorizationStep

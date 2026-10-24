@@ -29,6 +29,7 @@
                         <th>Member #</th>
                         <th>Date of Service</th>
                         <th>Procedure</th>
+                        <th>Facility</th>
                         <th>Status</th>
                         <th>Processor</th>
                         <th>Last Updated</th>
@@ -59,6 +60,13 @@
                                 } @else {
                                     —
                                 }
+                            </td>
+                            <td class="history-table__cell">
+                                <span
+                                    class="history-network"
+                                    [class.history-network--out]="record.servicingProviderInNetwork === false">
+                                    {{ formatNetwork(record.servicingProviderInNetwork) }}
+                                </span>
                             </td>
                             <td class="history-table__cell">
                                 <span class="history-status history-status--{{ record.status | lowercase }}">

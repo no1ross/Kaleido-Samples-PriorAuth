@@ -4,6 +4,7 @@ describe('getRouteForStep', () => {
   it.each([
     ['CaptureRequestingProviderStep', 'requesting-provider'],
     ['CaptureServicingProviderStep', 'servicing-provider'],
+    ['CaptureOutOfNetworkInfoStep', 'out-of-network-info'],
     ['CaptureClinicalInfoStep', 'clinical-info'],
     ['ReviewPriorAuthorizationStep', 'review'],
     ['SubmitPriorAuthorizationStep', 'review'],
