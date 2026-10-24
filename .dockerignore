@@ -27,4 +27,5 @@ README.md
 !.git/HEAD
 !.git/config
 !.git/packed-refs
-!.git/refs/heads/**data/
+!.git/refs/heads/**
+data/

@@ -413,5 +413,83 @@
       }
     ],
     "MappingRules": []
+  },
+  {
+    "QuestionnaireDefinitionId": "f2b0c6d1-7a35-4f0e-9c1e-2d8b6a4e5f01",
+    "QuestionnaireId": "priorauth-out-of-network",
+    "Version": "1.0.0",
+    "Name": "out-of-network",
+    "Title": "Out-of-network facility",
+    "Description": "Why an out-of-network servicing facility is requested, and that the member knows about possible costs.",
+    "IsActive": true,
+    "Items": [
+      {
+        "QuestionnaireDefinitionItemId": "4e4cfd1a-5331-407c-ad88-59ca6fe04b71",
+        "QuestionnaireDefinitionId": "f2b0c6d1-7a35-4f0e-9c1e-2d8b6a4e5f01",
+        "LinkId": "oon-reason",
+        "Text": "The servicing facility is out of the member's network. Why is this facility requested?",
+        "Type": "choice",
+        "BindingKey": "OutOfNetworkReason",
+        "Required": true,
+        "Repeats": false,
+        "DefaultValue": null,
+        "Order": 1,
+        "AnswerOptions": [
+          { "QuestionnaireDefinitionItemAnswerOptionId": "a139c142-a6c4-46b1-b49a-ab9882927368", "QuestionnaireDefinitionItemId": "4e4cfd1a-5331-407c-ad88-59ca6fe04b71", "Value": "NoInNetworkWithinDistance", "DisplayText": "No in-network facility within a reasonable distance", "Order": 1 },
+          { "QuestionnaireDefinitionItemAnswerOptionId": "edaba6e0-9b4f-4e25-b58b-15719bdf7ef0", "QuestionnaireDefinitionItemId": "4e4cfd1a-5331-407c-ad88-59ca6fe04b71", "Value": "ContinuityOfCare", "DisplayText": "Continuity of care (the member is already treated there)", "Order": 2 },
+          { "QuestionnaireDefinitionItemAnswerOptionId": "cbaf6168-5d15-473a-8863-fa8f4caed9c8", "QuestionnaireDefinitionItemId": "4e4cfd1a-5331-407c-ad88-59ca6fe04b71", "Value": "SpecializedService", "DisplayText": "The service is not available in network", "Order": 3 },
+          { "QuestionnaireDefinitionItemAnswerOptionId": "82e8f471-0af0-42ce-af78-e70b0f019ac5", "QuestionnaireDefinitionItemId": "4e4cfd1a-5331-407c-ad88-59ca6fe04b71", "Value": "MemberChoice", "DisplayText": "The member's choice", "Order": 4 },
+          { "QuestionnaireDefinitionItemAnswerOptionId": "8eca3db7-d0a5-4ff6-8389-56328aad1179", "QuestionnaireDefinitionItemId": "4e4cfd1a-5331-407c-ad88-59ca6fe04b71", "Value": "Other", "DisplayText": "Other", "Order": 5 }
+        ]
+      },
+      {
+        "QuestionnaireDefinitionItemId": "4cbbb69a-b3a1-4b02-ae1c-cf2c015fd043",
+        "QuestionnaireDefinitionId": "f2b0c6d1-7a35-4f0e-9c1e-2d8b6a4e5f01",
+        "LinkId": "oon-reason-detail",
+        "Text": "Describe the reason.",
+        "Type": "text",
+        "BindingKey": "OutOfNetworkReasonDetail",
+        "Required": true,
+        "Repeats": false,
+        "DefaultValue": null,
+        "Order": 2,
+        "AnswerOptions": [],
+        "EnableWhen": [
+          {
+            "QuestionnaireDefinitionItemEnableWhenId": "9f4d8c40-e3bc-4618-aa01-a7d698773249",
+            "QuestionnaireDefinitionItemId": "4cbbb69a-b3a1-4b02-ae1c-cf2c015fd043",
+            "QuestionBindingKey": "OutOfNetworkReason",
+            "Operator": "Equals",
+            "AnswerValue": "Other"
+          }
+        ]
+      },
+      {
+        "QuestionnaireDefinitionItemId": "22a5e796-58d7-41a3-9ebc-48321cf3f9f9",
+        "QuestionnaireDefinitionId": "f2b0c6d1-7a35-4f0e-9c1e-2d8b6a4e5f01",
+        "LinkId": "member-informed-of-cost",
+        "Text": "Was the member told that an out-of-network facility may cost them more?",
+        "Type": "boolean",
+        "BindingKey": "MemberInformedOfCost",
+        "Required": true,
+        "Repeats": false,
+        "DefaultValue": null,
+        "Order": 3,
+        "AnswerOptions": []
+      }
+    ],
+    "MappingRules": [
+      {
+        "QuestionnaireMappingRuleId": "7f975cbe-ce7f-4ddb-93e4-c96bbaa48306",
+        "QuestionnaireDefinitionId": "f2b0c6d1-7a35-4f0e-9c1e-2d8b6a4e5f01",
+        "StepName": "CaptureOutOfNetworkInfoStep",
+        "PlanId": null,
+        "LineOfBusiness": null,
+        "ProcedureModality": null,
+        "ProcedureCodeValue": null,
+        "Priority": 100,
+        "IsActive": true
+      }
+    ]
   }
 ]

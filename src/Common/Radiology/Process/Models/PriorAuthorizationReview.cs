@@ -1,3 +1,4 @@
+using Kaleido.Samples.PriorAuth.Compliance;
 using System.ComponentModel;
 using Kaleido.Samples.PriorAuth.Radiology.Process.Services;
 
@@ -28,7 +29,7 @@ public sealed record PriorAuthorizationReview
     public IReadOnlyList<RecordedQuestionnaire> Answers { get; init; } = [];
 }
 
-public sealed record ReviewedMember(string DisplayName, string MemberNumber, string PlanName);
+public sealed record ReviewedMember([property: Phi] string DisplayName, string MemberNumber, string PlanName);
 
 public sealed record ReviewedService(string CodeValue, ProcedureCodeSystem CodeSystem, string Description);
 

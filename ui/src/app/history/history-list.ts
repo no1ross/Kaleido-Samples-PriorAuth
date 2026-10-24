@@ -173,6 +173,15 @@ export class HistoryList implements OnInit {
         }
     }
 
+    /** The servicing facility's network status; a dash until a facility is chosen. */
+    formatNetwork(inNetwork: boolean | null | undefined): string {
+        return inNetwork === true
+            ? 'In network'
+            : inNetwork === false
+                ? 'Out of network'
+                : '—';
+    }
+
     formatStatus(status: string): string {
         if (!status) {
             return '—';

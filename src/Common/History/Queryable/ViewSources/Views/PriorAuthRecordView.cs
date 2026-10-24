@@ -1,3 +1,4 @@
+using Kaleido.Samples.PriorAuth.Compliance;
 using System.ComponentModel;
 
 namespace Kaleido.Samples.PriorAuth.History.Queryable.ViewSources.Views;
@@ -20,6 +21,7 @@ public sealed record PriorAuthRecordView
     public string MemberNumber { get; init; } = string.Empty;
 
     [Description("The display name of the member the request is for; empty if no member has been captured yet.")]
+    [Phi]
     public string MemberDisplayName { get; init; } = string.Empty;
 
     [Description("The planned date of service; null if not yet known.")]
@@ -30,6 +32,9 @@ public sealed record PriorAuthRecordView
 
     [Description("The readable description of the main service requested; empty if no service has been captured yet.")]
     public string PrimaryProcedureDescription { get; init; } = string.Empty;
+
+    [Description("Whether the servicing facility is in the member's network (false: out of network); null until a facility is chosen.")]
+    public bool? ServicingProviderInNetwork { get; init; }
 
     [Description("When the record was first created, in UTC.")]
     public DateTimeOffset CreatedUtc { get; init; }

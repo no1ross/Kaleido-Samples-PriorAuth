@@ -29,6 +29,7 @@ public sealed class HistoryClient(
                 .AsNoTracking()
                 .Include(x => x.Member)
                 .Include(x => x.RequestedServices)
+                .Include(x => x.ServicingProvider)
                 .SingleAsync(x => x.ProcessId == processId, cancellationToken);
 
         var primaryService = priorAuthorization.RequestedServices.MinBy(x => x.CreatedUtc);
@@ -42,7 +43,8 @@ public sealed class HistoryClient(
                 MemberDisplayName = priorAuthorization.Member?.DisplayName ?? string.Empty,
                 DateOfService = priorAuthorization.DateOfService,
                 PrimaryProcedureCode = primaryService?.ResolvedCodeValue ?? string.Empty,
-                PrimaryProcedureDescription = primaryService?.Description ?? string.Empty
+                PrimaryProcedureDescription = primaryService?.Description ?? string.Empty,
+                ServicingProviderInNetwork = priorAuthorization.ServicingProvider?.IsInNetwork
             },
             processId,
             cancellationToken);

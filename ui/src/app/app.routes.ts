@@ -115,6 +115,19 @@ export const routes: Routes = [
         } satisfies ProviderSelectionRouteData
       },
       {
+        path: 'out-of-network-info',
+        component: InformationStep,
+        data: {
+          stepName: 'CaptureOutOfNetworkInfoStep',
+          eyebrow: 'Out-of-Network Facility',
+          title: 'Out-of-network facility',
+          submitLabel: 'Submit Answers',
+          emptyMessage: 'There are no out-of-network questions pending for this process.',
+          failureMessage: 'Unable to capture the out-of-network information.',
+          nextRoute: 'review'
+        } satisfies InformationStepRouteData
+      },
+      {
         path: 'clinical-info',
         component: InformationStep,
         data: {

@@ -9,10 +9,12 @@
 - `ui/` is the Angular frontend; `ui/priorauth-ui.esproj` makes it a Visual Studio project (Start runs `npm start`, so `ng` need not be on PATH). The npm scripts stay the build and test commands; the CI filter leaves the esproj out
 - `src/Services/*/` are the ASP.NET Core services (targeting .NET 8); `src/Router/` is the gateway with the MCP adapter, `EventCollector/` receives the services' events, and `Seeder/` seeds the shared databases
 - `src/Common/` holds the steps, handlers, query sources, data and dev auth the services share
+- `tests/` holds the unit tests (`Kaleido.Samples.PriorAuth.UnitTests`) and the functional tests that run the whole sample in-process (`Kaleido.Samples.PriorAuth.FunctionalTests`)
 
 ## Verification
 - For backend changes, prefer `dotnet build` on the affected project
-- Run `dotnet test` for any affected backend test projects
+- Run the backend tests: `dotnet test Kaleido.Samples.PriorAuth.CI.slnf` (both test projects; CI runs the same). See [`tests/README.md`](tests/README.md)
+- A change in a step, handler, query or setting comes with its test: a unit test for its logic, a functional test when it changes what a caller sees across services
 - For UI changes, run from `ui/`:
   - `npm test`
   - `npm run build`
@@ -21,6 +23,7 @@
 ## UI dependencies
 - `npm audit` in `ui/` is kept at 0 (no1ross/Kaleido#97). Upgrade with versions published at least 7 days earlier (Dependabot's cooldown is 7 days); never `npm audit fix --force`. `npm install --before=<date>` re-resolves without picking a newer transitive release.
 - `package.json` `overrides` pin `vite` 7.3.7 and `@modelcontextprotocol/sdk` 1.32.1, the fixed versions that `@angular/build`/`@angular/cli` 21.2.28 depend on. **Remove both overrides when Angular is updated to 21.2.28 or later**: they would otherwise hold back the Vite and MCP SDK versions Angular asks for.
+- Security overrides (#20): `undici@6` 6.29.1 and `undici@7` 7.30.1 (`@angular/build` 21.2.28 still pins a vulnerable 7.x; also `jsdom`, `node-gyp`), `fast-uri@3` 3.1.9 (`ajv`), `body-parser@2` 2.4.0 (`express` under the MCP SDK). Remove each once its dependents ask for the fixed version or later. fast-uri 3.1.9 and body-parser 2.4.0 were taken under 7 days old: a one-time exception for these security fixes, approved by the maintainer.
 
 ## Local run workflow
 - Prefer the compose file under `compose/` (`docker-compose.yml`; `docker-compose.override.yml` is for local overrides and sets nothing by default): it runs the router and every service as Production. The UI is not in compose and the router neither serves nor proxies it: run it with `npm start` in `ui/` (or Start on the esproj) at `http://localhost:4200` (see [Configuration per environment](#configuration-per-environment))
@@ -73,6 +76,13 @@
 - Configured questionnaire items carry `EnableWhen` (binding key, operator, answer). `QuestionnaireTranslation` maps them onto the information request (binding key -> item id; operator names or FHIR symbols). An unknown operator makes Kaleido reject the request as not well-formed (`pro_information_request_invalid`) instead of asking the question always.
 - Kaleido decides which questions apply ([ADR 0024](https://github.com/no1ross/Kaleido/blob/master/docs/decisions/0024-conditional-questions.md)). The MCP adapter asks them round by round, and the UI (`information-conditions.ts`) shows a question once it applies and never sends the answers of the others.
 - A handler gets no answer for a question that did not apply. `CaptureMriInfoHandler` reads a missing Laterality (BodyPart Spine) as `Laterality.None`.
+
+## Out-of-network facilities
+- When the servicing facility chosen in Capture Servicing Provider is out of network, Radiology requires `CaptureOutOfNetworkInfoStep` with the questionnaire configured for that step (Seeder `questionnaire-definitions.json`, `priorauth-out-of-network`: the reason, a description when the reason is Other, and that the member was told about possible costs), then the clinical questions. An in-network facility goes straight to the clinical questions; with no questionnaire configured, none are asked.
+- The answers are kept like every configured questionnaire's and show in Review. Whatever they are, the request goes on to review: the reviewer decides (#12).
+- History records the facility's network status (`ServicingProviderInNetwork`: null until a facility is chosen); the UI's History list shows it.
+- While the questions are pending only they run (a required step), so the facility cannot be changed until they are answered.
+- After pulling this change: delete `history.db` (new column, `EnsureCreated`), and run the seeder for `Configuration` (the new questionnaire).
 
 ## Counting query results
 - Every service whose query sources read an EF Core database (CodeSet, Configuration, History, Member, Provider, ReferenceData, Radiology) calls `AddPriorAuthEfCoreQueries()` (`src/Common/Queryable`): a full page is counted with one `SELECT COUNT(*)` instead of reading every matching row (visible in the EF command log in Aspire). Kaleido's default executor counts an async query by enumerating it ([PATTERNS](https://github.com/no1ross/Kaleido/blob/master/docs/PATTERNS.md), no1ross/Kaleido#352).

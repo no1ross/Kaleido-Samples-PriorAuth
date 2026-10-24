@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Kaleido.Samples.PriorAuth.FunctionalTests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Kaleido.Processor" />
+    <Using Include="Kaleido.Processor.Execution" />
+    <Using Include="Kaleido.Queryable.Query" />
+  </ItemGroup>
+
+  <!-- Every host's entry point is a global Program: each reference gets an alias to tell them apart. -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Common\Kaleido.Samples.PriorAuth.Common.csproj" />
+    <ProjectReference Include="..\..\src\EventCollector\Kaleido.Samples.PriorAuth.EventCollector.csproj" Aliases="eventcollector" />
+    <ProjectReference Include="..\..\src\Router\Kaleido.Samples.PriorAuth.Router.csproj" Aliases="router" />
+    <ProjectReference Include="..\..\src\Seeder\Kaleido.Samples.PriorAuth.Seeder.csproj" Aliases="seeder" />
+    <ProjectReference Include="..\..\src\Services\CodeSet\Kaleido.Samples.PriorAuth.CodeSet.csproj" Aliases="codeset" />
+    <ProjectReference Include="..\..\src\Services\Configuration\Kaleido.Samples.PriorAuth.Configuration.csproj" Aliases="configuration" />
+    <ProjectReference Include="..\..\src\Services\History\Kaleido.Samples.PriorAuth.History.csproj" Aliases="history" />
+    <ProjectReference Include="..\..\src\Services\Intake\Kaleido.Samples.PriorAuth.Intake.csproj" Aliases="intake" />
+    <ProjectReference Include="..\..\src\Services\Member\Kaleido.Samples.PriorAuth.Member.csproj" Aliases="member" />
+    <ProjectReference Include="..\..\src\Services\Provider\Kaleido.Samples.PriorAuth.Provider.csproj" Aliases="provider" />
+    <ProjectReference Include="..\..\src\Services\Radiology\Kaleido.Samples.PriorAuth.Radiology.csproj" Aliases="radiology" />
+    <ProjectReference Include="..\..\src\Services\ReferenceData\Kaleido.Samples.PriorAuth.ReferenceData.csproj" Aliases="referencedata" />
+  </ItemGroup>
+</Project>

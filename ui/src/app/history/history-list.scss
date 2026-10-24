@@ -160,6 +160,15 @@
     letter-spacing: 0.04em;
 }
 
+.history-network {
+    white-space: nowrap;
+}
+
+.history-network--out {
+    color: #856404;
+    font-weight: 700;
+}
+
 .history-status--draft {
     background: #e8f0fe;
     color: #315efb;

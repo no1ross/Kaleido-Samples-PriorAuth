@@ -12,14 +12,16 @@ namespace Kaleido.Samples.PriorAuth.Radiology.Process.Handlers;
 
 /// <summary>
 /// Records the servicing provider from the search result the caller chose (the location must belong
-/// to the facility and be offered for this request; names and network status come from that result),
-/// then starts the clinical review: the clinical question provider's
-/// first round (or review, when no clinical review applies).
+/// to the facility and be offered for this request; names and network status come from that result).
+/// An out-of-network facility then requires its configured questions
+/// (<see cref="CaptureOutOfNetworkInfoStep"/>); otherwise the clinical review starts: the clinical
+/// question provider's first round (or review, when no clinical review applies).
 /// </summary>
 public sealed class CaptureServicingProviderHandler(
     RadiologyDbContext dbContext,
     RequestingProviderSearchClient providerSearch,
     RadiologyClinicalReview clinicalReview,
+    ConfiguredInformationRequests informationRequests,
     HistoryClient historyClient)
     : IProcessStepHandler<CaptureServicingProviderStep>
 {
@@ -66,6 +68,18 @@ public sealed class CaptureServicingProviderHandler(
 
             await historyClient.RecordAsync(context.ProcessId, cancellationToken);
 
+            // An out-of-network facility first gets its configured questions (none configured: none asked).
+            if (!chosen.IsInNetwork &&
+                await informationRequests.CreateAsync(
+                    context.ProcessId,
+                    nameof(CaptureOutOfNetworkInfoStep),
+                    procedureModality: null,
+                    await PrimaryProcedureCodeAsync(priorAuthorization.PriorAuthorizationId, cancellationToken),
+                    cancellationToken) is { } outOfNetwork)
+            {
+                return ProcessStepHandlerResult.RequireInformation<CaptureOutOfNetworkInfoStep>(outOfNetwork);
+            }
+
             return await clinicalReview.StartAsync(context.ProcessId, cancellationToken) is { } clinical
                 ? ProcessStepHandlerResult.RequireInformation<CaptureClinicalInfoStep>(clinical)
                 : ProcessStepHandlerResult.Success<ReviewPriorAuthorizationStep>();
@@ -76,4 +90,15 @@ public sealed class CaptureServicingProviderHandler(
                 RadiologyProcessMessages.QueryableRequestFailed(ex.Errors.FirstOrDefault()?.Code ?? "QUERYABLE_REQUEST_FAILED", ex.Message));
         }
     }
+
+    // The service captured first. Ordered in memory: SQLite cannot order by DateTimeOffset.
+    private async Task<string?> PrimaryProcedureCodeAsync(
+        Guid priorAuthorizationId,
+        CancellationToken cancellationToken) =>
+        (await dbContext.PriorAuthorizationRequestedServices
+            .AsNoTracking()
+            .Where(x => x.PriorAuthorizationId == priorAuthorizationId)
+            .ToListAsync(cancellationToken))
+        .MinBy(x => x.CreatedUtc)?
+        .ResolvedCodeValue;
 }

@@ -37,6 +37,8 @@ export function getRouteForStep(
             return 'requesting-provider';
         case 'CaptureServicingProviderStep':
             return 'servicing-provider';
+        case 'CaptureOutOfNetworkInfoStep':
+            return 'out-of-network-info';
         case 'CaptureClinicalInfoStep':
             return 'clinical-info';
         case 'ReviewPriorAuthorizationStep':

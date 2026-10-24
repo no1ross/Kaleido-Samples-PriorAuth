@@ -1,0 +1,8 @@
+<Project>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..\'))" />
+    <ItemGroup>
+        <!-- The tests reach internal types (the services' Program, the seeder) too. -->
+        <InternalsVisibleTo Include="Kaleido.Samples.PriorAuth.UnitTests" />
+        <InternalsVisibleTo Include="Kaleido.Samples.PriorAuth.FunctionalTests" />
+    </ItemGroup>
+</Project>
