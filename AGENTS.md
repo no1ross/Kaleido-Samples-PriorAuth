@@ -23,6 +23,7 @@
 ## UI dependencies
 - `npm audit` in `ui/` is kept at 0 (no1ross/Kaleido#97). Upgrade with versions published at least 7 days earlier (Dependabot's cooldown is 7 days); never `npm audit fix --force`. `npm install --before=<date>` re-resolves without picking a newer transitive release.
 - `package.json` `overrides` pin `vite` 7.3.7 and `@modelcontextprotocol/sdk` 1.32.1, the fixed versions that `@angular/build`/`@angular/cli` 21.2.28 depend on. **Remove both overrides when Angular is updated to 21.2.28 or later**: they would otherwise hold back the Vite and MCP SDK versions Angular asks for.
+- Security overrides (#20): `undici@6` 6.29.1 and `undici@7` 7.30.1 (`@angular/build` 21.2.28 still pins a vulnerable 7.x; also `jsdom`, `node-gyp`), `fast-uri@3` 3.1.9 (`ajv`), `body-parser@2` 2.4.0 (`express` under the MCP SDK). Remove each once its dependents ask for the fixed version or later. fast-uri 3.1.9 and body-parser 2.4.0 were taken under 7 days old: a one-time exception for these security fixes, approved by the maintainer.
 
 ## Local run workflow
 - Prefer the compose file under `compose/` (`docker-compose.yml`; `docker-compose.override.yml` is for local overrides and sets nothing by default): it runs the router and every service as Production. The UI is not in compose and the router neither serves nor proxies it: run it with `npm start` in `ui/` (or Start on the esproj) at `http://localhost:4200` (see [Configuration per environment](#configuration-per-environment))
