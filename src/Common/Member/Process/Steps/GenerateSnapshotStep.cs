@@ -9,8 +9,7 @@ namespace Kaleido.Samples.PriorAuth.Member.Process.Steps;
 [KaleidoAuthorization(Policy = DevAuthPolicies.InternalCaller)]
 [ProcessStep(
     DisplayName = "Members - Generate Snapshot",
-    Description = "Generates a member snapshot for the current process context.",
-    Version = "1.0.0")]
+    Description = "Generates a member snapshot for the current process context.")]
 public sealed record GenerateSnapshotStep : IProcessStep
 {
     [Description("The member to snapshot.")]

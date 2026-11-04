@@ -8,14 +8,14 @@ namespace Kaleido.Samples.PriorAuth.Radiology.Process.Steps;
 /// </summary>
 [ProcessStep(
     DisplayName = "Capture Out-of-Network Information",
-    Description = "Answers the questions configured for an out-of-network servicing facility.",
-    Version = "1.0.0")]
+    Description = "Answers the questions configured for an out-of-network servicing facility.")]
 [AvailableAfter<CaptureServicingProviderStep>]
 [AvailableUntil<SubmitPriorAuthorizationStep>]
 [Repeatable]
 public sealed record CaptureOutOfNetworkInfoStep : IInformationStep
 {
     public required string InformationRequestId { get; init; }
+    public required string ExchangeId { get; init; }
 
     public IReadOnlyList<InformationResponseItem> Items { get; init; } = [];
 }

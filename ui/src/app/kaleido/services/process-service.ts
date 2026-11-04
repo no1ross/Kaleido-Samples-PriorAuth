@@ -95,7 +95,11 @@ export class ProcessService {
             .pipe(
                 switchMap(result => {
                     this.processState.setProcessId(result.processId);
-                    this.processState.setProcessMessages(result.businessMessages);
+                    // A notice (e.g. pro_not_permitted: next steps this user may not run) is shown with the messages.
+                    this.processState.setProcessMessages([
+                        ...result.businessMessages,
+                        ...(result.notice ? [{ type: 'warning', ...result.notice }] : [])
+                    ]);
                     this.logStepOutcome(result);
 
                     if (result.targetProcessorName) {
@@ -124,11 +128,11 @@ export class ProcessService {
                         result.availableSteps);
 
                     // Anything but "completed" means the step did not finish:
-                    // "pending" = rejected before it ran (e.g. not a next step,
-                    // answers that don't fit); the reason is in frameworkMessages.
-                    if (result.outcome !== 'completed') {
+                    // "pending" = refused before it ran (e.g. not a next step, answers
+                    // that don't fit, pro_process_ended); the reason is in frameworkMessages.
+                    if (result.status !== 'completed') {
                         throw {
-                            outcome: result.outcome,
+                            status: result.status,
                             messages: [
                                 ...result.businessMessages,
                                 ...result.frameworkMessages
@@ -208,7 +212,7 @@ export class ProcessService {
         processId: string | undefined
     ): Observable<never> {
         const failure: ProcessErrorResponse = {
-            outcome: 'unknown',
+            status: 'unknown',
             messages: [{
                 code: IDEMPOTENCY_OUTCOME_UNKNOWN,
                 type: 'warning',
@@ -279,11 +283,15 @@ export class ProcessService {
         result: ProcessExecutionResponse<any>
     ): void {
         const title =
-            `[PROCESS] ${result.stepName} (${result.outcome})`;
+            `[PROCESS] ${result.stepName} (${result.status})`;
 
         console.group(title);
         console.log('Processor Process', result.processId);
-        console.log('Outcome', result.outcome);
+        console.log('Status', result.status);
+
+        if (result.notice) {
+            console.warn(`[${result.notice.code}] ${result.notice.message}`);
+        }
 
         if (result.targetProcessorName) {
             console.log('Target Processor (cross-processor handoff)', result.targetProcessorName);
@@ -363,7 +371,8 @@ export class ProcessService {
 }
 
 export class ProcessErrorResponse {
-    outcome!: string;
+    /** The step's status, or 'unknown' when an earlier attempt's outcome could not be confirmed. */
+    status!: string;
     messages!: ProcessMessage[];
 
     static is(
@@ -371,7 +380,7 @@ export class ProcessErrorResponse {
     ): value is ProcessErrorResponse {
         return typeof value === 'object'
             && value !== null
-            && 'outcome' in value
+            && 'status' in value
             && 'messages' in value;
     }
 }

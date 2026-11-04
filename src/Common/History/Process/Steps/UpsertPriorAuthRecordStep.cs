@@ -11,8 +11,7 @@ namespace Kaleido.Samples.PriorAuth.History.Process.Steps;
 [KaleidoAuthorization(Policy = DevAuthPolicies.InternalCaller)]
 [ProcessStep(
     DisplayName = "History - Upsert Record",
-    Description = "Records the latest snapshot of a prior authorization request (one record per process), as reported by the calling processor.",
-    Version = "2.1.0")]
+    Description = "Records the latest snapshot of a prior authorization request (one record per process), as reported by the calling processor.")]
 [Repeatable]
 public sealed record UpsertPriorAuthRecordStep : IProcessStep
 {

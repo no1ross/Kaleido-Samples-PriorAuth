@@ -75,7 +75,7 @@ public sealed class OutOfNetworkHandlersTests : IDisposable
         _clinical.Setup(x => x.StartAsync(It.IsAny<ClinicalContext>(), It.IsAny<CancellationToken>())).ReturnsAsync(round);
 
         var result = await new CaptureOutOfNetworkInfoHandler(_bed.InformationRequests(), ClinicalReview())
-            .ExecuteAsync(new CaptureOutOfNetworkInfoStep { InformationRequestId = "out-of-network|1.0.0", Items = Items(("OutOfNetworkReason", "MemberChoice")) }, _bed.Context, RadiologyTestBed.Token);
+            .ExecuteAsync(new CaptureOutOfNetworkInfoStep { InformationRequestId = "out-of-network|1.0.0", ExchangeId = TestSupport.Questionnaires.ExchangeId, Items = Items(("OutOfNetworkReason", "MemberChoice")) }, _bed.Context, RadiologyTestBed.Token);
 
         Assert.Equal(typeof(CaptureClinicalInfoStep), result.RequiredStep);
         var answered = await _bed.InformationRequests().AnswersAsync(_bed.Context.ProcessId, RadiologyTestBed.Token);

@@ -12,7 +12,6 @@ namespace Kaleido.Samples.PriorAuth.Radiology.Queryable.ContextSources;
 // what Radiology knows about the request (the member and their coverage) and lets the Provider
 // service do the actual search, paging and sorting.
 [QuerySource(
-    Version = "1.0.0",
     DisplayName = "Requesting Provider Search",
     Description = "Searchable requesting provider results scoped to the active radiology process.",
     Source = "Prior Authorization Radiology")]

@@ -7,14 +7,14 @@ namespace Kaleido.Samples.PriorAuth.Radiology.Process.Steps;
 /// </summary>
 [ProcessStep(
     DisplayName = "Capture Clinical Information",
-    Description = "Answers the clinical questions configured for the requested service.",
-    Version = "1.0.0")]
+    Description = "Answers the clinical questions configured for the requested service.")]
 [AvailableAfter<CaptureServicingProviderStep>]
 [AvailableUntil<SubmitPriorAuthorizationStep>]
 [Repeatable]
 public sealed record CaptureClinicalInfoStep : IInformationStep
 {
     public required string InformationRequestId { get; init; }
+    public required string ExchangeId { get; init; }
 
     public IReadOnlyList<InformationResponseItem> Items { get; init; } = [];
 }

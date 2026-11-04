@@ -47,7 +47,7 @@ public sealed class RadiologyHandlersTests : IDisposable
     public async Task SubmitIsRolledBackWhenHistoryDoesNotRecord()
     {
         await _bed.AddPriorAuthorizationAsync(codeValues: "73721");
-        _bed.HistoryOutcome = StepExecutionOutcome.Failed;
+        _bed.HistoryStatus = StepExecutionStatus.Failed;
 
         var result = await SubmitAsync("true");
 
@@ -130,7 +130,7 @@ public sealed class RadiologyHandlersTests : IDisposable
 
     private Task<ProcessStepHandlerResult> SubmitAsync(string attested) =>
         new SubmitPriorAuthorizationHandler(_bed.Db, _bed.InformationRequests(), _bed.HistoryClient())
-            .ExecuteAsync(new SubmitPriorAuthorizationStep { InformationRequestId = "attestation|1.0.0", Items = Items(("Attested", attested)) }, _bed.Context, RadiologyTestBed.Token);
+            .ExecuteAsync(new SubmitPriorAuthorizationStep { InformationRequestId = "attestation|1.0.0", ExchangeId = TestSupport.Questionnaires.ExchangeId, Items = Items(("Attested", attested)) }, _bed.Context, RadiologyTestBed.Token);
 
     private Task<ProcessStepHandlerResult> RemoveAsync(Guid requestedServiceId) =>
         new RemoveRequestedServiceHandler(_bed.Db, _bed.HistoryClient())
@@ -138,5 +138,5 @@ public sealed class RadiologyHandlersTests : IDisposable
 
     private Task<ProcessStepHandlerResult> MriInfoAsync(params (string ItemId, string Value)[] answers) =>
         new CaptureMriInfoHandler(_bed.Db, new MriProcedureCodeResolverClient(_bed.Kaleido), _bed.InformationRequests())
-            .ExecuteAsync(new CaptureMriInfoStep { InformationRequestId = "mri-basic|1.0.0", Items = Items(answers) }, _bed.Context, RadiologyTestBed.Token);
+            .ExecuteAsync(new CaptureMriInfoStep { InformationRequestId = "mri-basic|1.0.0", ExchangeId = TestSupport.Questionnaires.ExchangeId, Items = Items(answers) }, _bed.Context, RadiologyTestBed.Token);
 }
