@@ -107,6 +107,7 @@ export class ReviewPriorAuthorization {
                 processId,
                 processStep: {
                     informationRequestId: request.informationRequestId,
+                    exchangeId: request.exchangeId,
                     items
                 }
             })

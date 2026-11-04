@@ -94,15 +94,15 @@ public sealed class PriorAuthHosts : IAsyncLifetime
             .RunAsync(Enum.GetValues<SupportedDomain>(), CancellationToken.None);
 
         Add(new PriorAuthHost<router::Program>(8080, Settings(), this));
-        Add(new PriorAuthHost<referencedata::Program>(8081, Settings(("ReferenceData", "referencedata.db")), this));
-        Add(new PriorAuthHost<codeset::Program>(8082, Settings(("CodeSet", "codeset.db")), this));
-        Add(new PriorAuthHost<provider::Program>(8083, Settings(("Provider", "provider.db")), this));
-        Add(new PriorAuthHost<member::Program>(8084, Settings(("Member", "member.db")), this));
+        Add(new PriorAuthHost<referencedata::Program>(8081, Settings(("ReferenceData", "referencedata.db"), ("ReferenceDataProcess", "referencedata-process.db")), this));
+        Add(new PriorAuthHost<codeset::Program>(8082, Settings(("CodeSet", "codeset.db"), ("CodeSetProcess", "codeset-process.db")), this));
+        Add(new PriorAuthHost<provider::Program>(8083, Settings(("Provider", "provider.db"), ("ProviderProcess", "provider-process.db")), this));
+        Add(new PriorAuthHost<member::Program>(8084, Settings(("Member", "member.db"), ("MemberProcess", "member-process.db")), this));
         Add(new PriorAuthHost<intake::Program>(8085, Settings(("Intake", "intake.db"), ("IntakeProcess", "intake-process.db")), this));
         Add(new PriorAuthHost<eventcollector::Program>(8086, Settings(("EventCollector", "eventcollector.db")), this));
-        Add(new PriorAuthHost<configuration::Program>(8087, Settings(("Configuration", "configuration.db")), this));
+        Add(new PriorAuthHost<configuration::Program>(8087, Settings(("Configuration", "configuration.db"), ("ConfigurationProcess", "configuration-process.db")), this));
         Add(new PriorAuthHost<radiology::Program>(8088, Settings(("Radiology", "radiology.db"), ("RadiologyProcess", "radiology-process.db")), this));
-        Add(new PriorAuthHost<history::Program>(8089, Settings(("History", "history.db")), this));
+        Add(new PriorAuthHost<history::Program>(8089, Settings(("History", "history.db"), ("HistoryProcess", "history-process.db")), this));
 
         // Start every host before any test calls one (a host's startup may call the others).
         foreach (var host in _hosts.Values)

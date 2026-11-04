@@ -1,7 +1,9 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
     <File Path="Directory.Packages.props" />
+    <File Path="Kaleido.Local.props.example" />
     <File Path="global.json" />
     <File Path="nuget.config" />
     <File Path="README.md" />

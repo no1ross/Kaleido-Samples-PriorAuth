@@ -11,8 +11,7 @@ namespace Kaleido.Samples.PriorAuth.Radiology.Process.Steps;
 [ProcessStep(
     DisplayName = "Start Radiology Intake",
     Description = "Initializes a radiology prior authorization from intake handoff data. " +
-                  "Accepts member and procedure information collected by the intake processor.",
-    Version = "1.0.0")]
+                  "Accepts member and procedure information collected by the intake processor.")]
 [AvailableUntil<CaptureRequestingProviderStep>]
 public sealed record StartRadiologyIntakeStep : IProcessStep
 {

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Kaleido.Samples.PriorAuth.Member.Queryable.ContextSources;
 
 [QuerySource(
-    Version = "1.0.0",
     DisplayName = "Members",
     Description = "Member enrollments, searchable by member number and name.",
     Source = "Prior Authorization Member Service")]

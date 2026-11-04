@@ -11,7 +11,6 @@ namespace Kaleido.Samples.PriorAuth.Provider.Queryable.ViewSources;
 // user's behalf).
 [QueryView(
     DisplayName = "Requesting Provider Search",
-    Version = "1.0.0",
     Description = "Searchable requesting provider results with derived network status.",
     DefaultSortField = nameof(RequestingProviderQueryContext.ProviderName))]
 [Pageable(DefaultSize = 25, MaxSize = 250)]

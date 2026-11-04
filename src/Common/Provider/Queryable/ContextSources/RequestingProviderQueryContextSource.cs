@@ -10,7 +10,6 @@ using Kaleido.Exceptions;
 namespace Kaleido.Samples.PriorAuth.Provider.Queryable.ContextSources;
 
 [QuerySource(
-    Version = "1.0.0",
     DisplayName = "Network Providers",
     Description = "Requesting providers or servicing facilities, with their locations and network status for a plan.",
     Source = "Prior Authorization Provider Search",

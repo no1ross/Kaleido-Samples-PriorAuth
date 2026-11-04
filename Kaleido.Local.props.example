@@ -1,0 +1,11 @@
+<Project>
+    <!-- Copy to Kaleido.Local.props (untracked, never in container builds) to build against the Kaleido
+         source next to this repository instead of the packages. Delete the copy, or set false, to go
+         back. -p:UseLocalKaleido=true|false or the UseLocalKaleido environment variable overrides it.
+         See AGENTS.md, "Local Kaleido source". -->
+    <PropertyGroup>
+        <UseLocalKaleido Condition="'$(UseLocalKaleido)' == ''">true</UseLocalKaleido>
+        <!-- The Kaleido repository's src folder; default ..\Kaleido\src\ from this repository's root. -->
+        <!-- <KaleidoSourceRoot Condition="'$(KaleidoSourceRoot)' == ''">C:\Repos\Kaleido\src\</KaleidoSourceRoot> -->
+    </PropertyGroup>
+</Project>

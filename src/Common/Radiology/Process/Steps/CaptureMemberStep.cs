@@ -7,8 +7,7 @@ namespace Kaleido.Samples.PriorAuth.Radiology.Process.Steps;
 
 [ProcessStep(
     DisplayName = "Capture Member",
-    Description = "Creates or updates the prior authorization with the selected member.",
-    Version = "1.0.0")]
+    Description = "Creates or updates the prior authorization with the selected member.")]
 [AvailableAfter<StartRadiologyIntakeStep>]
 [AvailableUntil<CaptureRequestingProviderStep>]
 // See ValidateMemberStep: the member cannot be changed once the MRI/CT questions are answered.

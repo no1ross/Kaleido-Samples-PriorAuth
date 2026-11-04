@@ -66,7 +66,7 @@ public sealed class OutOfNetworkTests(PriorAuthHosts hosts)
 
         var call = await flow.Client.ExecuteAsync("radiology", new RadiologySteps.ReviewPriorAuthorizationStep());
 
-        Assert.NotEqual(StepExecutionOutcome.Completed, call.Response?.Outcome);
+        Assert.NotEqual(StepExecutionStatus.Completed, call.Response?.Status);
         Assert.Equal(nameof(RadiologySteps.CaptureOutOfNetworkInfoStep), call.Response?.RequiredStep?.Name);
     }
 

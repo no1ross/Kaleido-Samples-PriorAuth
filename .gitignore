@@ -387,7 +387,6 @@ FodyWeavers.xsd
 
 # VS Code files for those working on multiple tools
 .vscode/*
-!.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
@@ -485,3 +484,6 @@ $RECYCLE.BIN/
 
 # Runtime databases (created at startup; reference data by the Seeder)
 data/*
+
+# Local Kaleido source switch (AGENTS.md, "Local Kaleido source")
+Kaleido.Local.props

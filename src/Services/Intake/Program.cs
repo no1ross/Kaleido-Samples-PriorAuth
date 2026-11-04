@@ -20,12 +20,6 @@ var intakeConnectionString =
         PriorAuthErrorCodes.MissingConnectionString,
         "ConnectionStrings:Intake is required.");
 
-var processConnectionString =
-    builder.Configuration.GetConnectionString("IntakeProcess")
-    ?? throw new KaleidoConfigurationException(
-        PriorAuthErrorCodes.MissingConnectionString,
-        "ConnectionStrings:IntakeProcess is required.");
-
 // Who created and last changed each row, through which application, and when (Common/Audit).
 builder.Services.AddPriorAuthAuditing();
 builder.Services.AddDbContext<IntakeDbContext>(
@@ -61,24 +55,21 @@ builder.Services.AddHttpClient("PriorAuthEventCollector", client =>
         builder.Configuration["Services:EventCollector:BaseUrl"]
         ?? "http://localhost:8086"));
 
-builder.Services.AddKaleido(builder.Configuration, o =>
+builder.Services.AddKaleido(builder.Configuration, new()
     {
-        o.ServiceName = "intake";
-        o.Assemblies = new[] { typeof(Program).Assembly, typeof(IntakeDbContext).Assembly };
-        o.TypeFilter = type => type.Namespace?.StartsWith("Kaleido.Samples.PriorAuth.Intake", StringComparison.Ordinal) ?? false;
-        o.AuthorizationMode = KaleidoAuthorizationMode.ZeroTrust;
-        o.DefaultAuthorization = new(DevAuthPolicies.AuthenticatedUser, []);
+        ServiceName = "intake",
+        Assemblies = new[] { typeof(Program).Assembly, typeof(IntakeDbContext).Assembly },
+        TypeFilter = type => type.Namespace?.StartsWith("Kaleido.Samples.PriorAuth.Intake", StringComparison.Ordinal) ?? false,
+        AuthorizationMode = KaleidoAuthorizationMode.ZeroTrust,
+        DefaultAuthorization = new(DevAuthPolicies.AuthenticatedUser, []),
     })
-    .AddEventPublisher<HttpEventPublisher>()
+    // Process state, Kaleido's outbox and idempotent requests in one SQLite database: a step's state
+    // and its event commit together (ADR 0023); a relay publishes its events (Common/PriorAuthStores).
+    .AddPriorAuthStores("IntakeProcess")
     // Events: PHI erased, PII kept; logs are configured separately (ADR 0025).
     .AddPriorAuthEventRedaction()
     // Sample: return framework diagnostics (e.g. pro_step_not_available) in frameworkMessages.
-    .AddHttp(o => o.IncludeFrameworkMessages = true)
-    // Process state, Kaleido's outbox and idempotent requests in one SQLite database: a step's state
-    // and its event commit together (ADR 0023).
-    .AddSqliteContextStore(processConnectionString)
-    .AddSqliteOutboxStore(processConnectionString)
-    .AddSqliteIdempotencyStore(processConnectionString)
+    .AddHttp(new() { IncludeFrameworkMessages = true })
     .AddHttpClients()
     // Outgoing calls: an on-behalf-of dev token for the caller (user + roles + this service as actor),
     // a service token for the service's own calls (ADR 0022).

@@ -10,7 +10,6 @@ namespace Kaleido.Samples.PriorAuth.Configuration.Queryable.ViewSources;
 
 [QueryView(
     DisplayName = "Questionnaire Definition",
-    Version = "1.0.0",
     Description = "Resolves a questionnaire definition for a given step and business context.")]
 internal sealed class QuestionnaireDefinitionViewSource(
     ConfigurationDbContext dbContext)

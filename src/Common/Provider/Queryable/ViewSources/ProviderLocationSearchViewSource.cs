@@ -7,7 +7,6 @@ namespace Kaleido.Samples.PriorAuth.Provider.Queryable.ViewSources;
 
 [QueryView(
     DisplayName = "Provider Search",
-    Version = "1.0.0",
     Description = "Searchable provider location results.",
     DefaultSortField = nameof(ProviderLocationQueryContext.ProviderName))]
 [Pageable(DefaultSize = 25, MaxSize = 250)]

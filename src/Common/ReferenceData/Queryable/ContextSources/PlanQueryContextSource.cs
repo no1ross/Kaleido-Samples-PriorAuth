@@ -8,7 +8,6 @@ namespace Kaleido.Samples.PriorAuth.ReferenceData.Queryable.ContextSources;
 
 // Service-to-service only: queried by Provider (PlanNetworkClient).
 [QuerySource(
-    Version = "1.0.0",
     DisplayName = "Plans",
     Description = "Health plans (reference data).",
     Source = "Prior Authorization Reference Data",

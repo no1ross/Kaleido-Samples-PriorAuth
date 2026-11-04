@@ -95,7 +95,7 @@ public sealed record QueryResults(IReadOnlyList<JsonElement> Results, int TotalC
 public sealed record StepCall(HttpStatusCode Status, StepExecutionResponse<JsonElement>? Response, string Raw)
 {
     public StepExecutionResponse<JsonElement> Completed =>
-        Response is { Outcome: StepExecutionOutcome.Completed } response
+        Response is { Status: StepExecutionStatus.Completed } response
             ? response
             : throw new Xunit.Sdk.XunitException($"The step did not complete: {Status} {Raw}");
 }

@@ -6,6 +6,9 @@ namespace Kaleido.Samples.PriorAuth.UnitTests.TestSupport;
 /// <summary>Configured questionnaires and answers for tests.</summary>
 public static class Questionnaires
 {
+    /// <summary>The exchange id the answers carry; Kaleido checks it before a handler runs (ADR 0031), not the handler.</summary>
+    public const string ExchangeId = "exchange-1";
+
     public static QuestionnaireDefinitionView Questionnaire(string id, params QuestionnaireItemView[] items) =>
         new() { QuestionnaireId = id, Version = "1.0.0", Name = id, Title = $"Title of {id}", Items = items };
 
@@ -28,6 +31,7 @@ public static class Questionnaires
         new()
         {
             InformationRequestId = requestId,
+            ExchangeId = ExchangeId,
             Items = Items(answers)
         };
 

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Kaleido.Samples.PriorAuth.ReferenceData.Queryable.ContextSources;
 
 [QuerySource(
-    Version = "1.0.0",
     DisplayName = "States",
     Description = "States (reference data).",
     Source = "Prior Authorization Reference Data",

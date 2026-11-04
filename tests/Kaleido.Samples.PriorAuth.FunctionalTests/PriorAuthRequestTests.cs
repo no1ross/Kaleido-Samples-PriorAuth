@@ -20,6 +20,11 @@ public sealed class PriorAuthRequestTests(PriorAuthHosts hosts)
         var handoff = (await flow.CaptureServiceAsync()).Completed;
         Assert.Equal("radiology", handoff.TargetProcessorName);
 
+        // The hand-off answers with Radiology's next step, its questions and its URL: no second call (#27).
+        Assert.Equal(nameof(RadiologySteps.CaptureMriInfoStep), handoff.RequiredStep?.Name);
+        Assert.NotNull(handoff.RequiredStep?.InformationRequest?.ExchangeId);
+        Assert.StartsWith("/radiology/", handoff.RequiredStep?.ExecuteUrl, StringComparison.Ordinal);
+
         await flow.AnswerMriQuestionsAsync();
         await flow.CaptureRequestingProviderAsync();
 
@@ -29,7 +34,7 @@ public sealed class PriorAuthRequestTests(PriorAuthHosts hosts)
         await flow.AnswerClinicalQuestionsAsync();
         var submitted = await flow.ReviewAndSubmitAsync();
 
-        Assert.Equal(StepExecutionOutcome.Completed, submitted.Outcome);
+        Assert.Equal(StepExecutionStatus.Completed, submitted.Status);
 
         var record = await HistoryRecordAsync(flow.ProcessId);
         Assert.Equal(PriorAuthorizationStatus.Submitted, record.Status);
@@ -38,6 +43,26 @@ public sealed class PriorAuthRequestTests(PriorAuthHosts hosts)
         Assert.NotNull(record.PriorAuthorizationId);
         Assert.Equal("bob", record.UpdatedBy);
         Assert.Equal("radiology", record.UpdatedVia);
+    }
+
+    [Fact]
+    public async Task IntakeRunsNoStepOnceItHandedTheRequestOff()
+    {
+        // The service is captured before any member: Intake's member steps have not run.
+        var flow = new PriorAuthFlow(hosts.As(Persona.Bob));
+        (await flow.Client.ExecuteAsync("intake", new IntakeSteps.StartIntakeStep())).Completed.ToString();
+        (await flow.CaptureServiceAsync()).Completed.ToString();
+
+        // Radiology owns the request now (ADR 0033): Intake refuses its own steps (#27).
+        var call = await flow.Client.ExecuteAsync("intake", new IntakeSteps.ValidateMemberStep
+        {
+            MemberId = Guid.NewGuid(),
+            MemberEnrollmentId = Guid.NewGuid(),
+            DateOfService = PriorAuthFlow.DateOfService
+        });
+
+        Assert.Equal(StepExecutionStatus.Pending, call.Response?.Status);
+        Assert.Contains("pro_process_ended", call.Response?.FrameworkMessages.Select(x => x.Code) ?? []);
     }
 
     [Fact]
@@ -63,7 +88,7 @@ public sealed class PriorAuthRequestTests(PriorAuthHosts hosts)
 
         var call = await flow.CaptureServiceAsync();
 
-        Assert.NotEqual(StepExecutionOutcome.Completed, call.Response?.Outcome);
+        Assert.NotEqual(StepExecutionStatus.Completed, call.Response?.Status);
         Assert.Null(call.Response?.TargetProcessorName);
     }
 
@@ -82,7 +107,7 @@ public sealed class PriorAuthRequestTests(PriorAuthHosts hosts)
             DateOfService = PriorAuthFlow.DateOfService
         });
 
-        Assert.NotEqual(StepExecutionOutcome.Completed, call.Response?.Outcome);
+        Assert.NotEqual(StepExecutionStatus.Completed, call.Response?.Status);
         Assert.Contains("pro_step_not_available", call.Raw, StringComparison.Ordinal);
     }
 
@@ -97,6 +122,7 @@ public sealed class PriorAuthRequestTests(PriorAuthHosts hosts)
         var confirmed = (await flow.Client.ExecuteAsync("radiology", new RadiologySteps.ConfirmCtInsteadOfMriStep
         {
             InformationRequestId = request.InformationRequestId,
+            ExchangeId = request.ExchangeId,
             Items = Answers.For(request, ("ConfirmCt", "true"))
         })).Completed;
 

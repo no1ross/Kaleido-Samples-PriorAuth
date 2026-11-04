@@ -45,9 +45,9 @@ public sealed class FakeKaleido : IKaleidoQueryableClientFactory, IKaleidoProces
         return this;
     }
 
-    /// <summary>A step answer with the given outcome (completed by default).</summary>
-    public static StepExecutionResponse Answer(string stepName, StepExecutionOutcome outcome = StepExecutionOutcome.Completed, string? targetProcessorName = null) =>
-        new() { ProcessId = Guid.NewGuid(), StepName = stepName, Outcome = outcome, TargetProcessorName = targetProcessorName };
+    /// <summary>A step answer with the given status (completed by default).</summary>
+    public static StepExecutionResponse Answer(string stepName, StepExecutionStatus status = StepExecutionStatus.Completed, string? targetProcessorName = null) =>
+        new() { ProcessId = Guid.NewGuid(), StepName = stepName, Status = status, TargetProcessorName = targetProcessorName };
 
     IKaleidoQueryableClient IKaleidoQueryableClientFactory.GetClient(string name) => new QueryableClient(this, name);
 
@@ -122,7 +122,7 @@ public sealed class FakeKaleido : IKaleidoQueryableClientFactory, IKaleidoProces
         public Task<ProcessStateResponse?> GetProcessStateAsync(Guid processId, CancellationToken cancellationToken) =>
             Task.FromResult<ProcessStateResponse?>(null);
 
-        public Task<ProcessExecutionResponse> ExecuteAsync(ExecuteProcessRequest request, CancellationToken cancellationToken) =>
+        public Task<ProcessExecutionResponse> ExecuteAsync(ExecuteProcessRequest request, string? idempotencyKey, CancellationToken cancellationToken) =>
             throw new NotSupportedException();
 
         public Task<StepExecutionResponse> ExecuteStepAsync<TStep>(TStep processStep, CancellationToken cancellationToken)
@@ -137,13 +137,13 @@ public sealed class FakeKaleido : IKaleidoQueryableClientFactory, IKaleidoProces
             {
                 ProcessId = answer.ProcessId,
                 StepName = answer.StepName,
-                Outcome = answer.Outcome,
+                Status = answer.Status,
                 TargetProcessorName = answer.TargetProcessorName,
                 BusinessMessages = answer.BusinessMessages
             });
         }
 
-        public Task<StepExecutionResponse<JsonElement>> ExecuteStepAsync(string stepName, JsonElement processStep, Guid? processId, CancellationToken cancellationToken) =>
+        public Task<StepExecutionResponse<JsonElement>> ExecuteStepAsync(string stepName, JsonElement processStep, Guid? processId, string? idempotencyKey, CancellationToken cancellationToken) =>
             throw new NotSupportedException();
     }
 }

@@ -12,7 +12,6 @@ namespace Kaleido.Samples.PriorAuth.Radiology.Queryable.ContextSources;
 // its search; Radiology adds the member's plan and lets the Provider service search servicing
 // facilities, with network status.
 [QuerySource(
-    Version = "1.0.0",
     DisplayName = "Servicing Provider Search",
     Description = "Searchable servicing providers (facilities where the service is performed) for the active radiology request, with network status.",
     Source = "Prior Authorization Radiology")]

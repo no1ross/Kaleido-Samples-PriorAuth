@@ -11,8 +11,7 @@ namespace Kaleido.Samples.PriorAuth.Radiology.Process.Steps;
 /// </remarks>
 [ProcessStep(
     DisplayName = "Capture Requesting Provider",
-    Description = "Captures the requesting provider for the current prior authorization.",
-    Version = "2.0.0")]
+    Description = "Captures the requesting provider for the current prior authorization.")]
 [AvailableAfter<StartRadiologyIntakeStep>]
 [AvailableUntil<SubmitPriorAuthorizationStep>]
 [Repeatable]

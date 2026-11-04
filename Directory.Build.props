@@ -1,9 +1,20 @@
 <Project>
+    <!-- Local Kaleido source (AGENTS.md, "Local Kaleido source"): UseLocalKaleido=true builds against the
+         Kaleido projects next to this repository instead of the packages (Directory.Build.targets).
+         Kaleido.Local.props (untracked) sets the default; -p:UseLocalKaleido or the environment wins. -->
+    <Import Project="$(MSBuildThisFileDirectory)Kaleido.Local.props" Condition="Exists('$(MSBuildThisFileDirectory)Kaleido.Local.props')" />
+    <PropertyGroup>
+        <UseLocalKaleido Condition="'$(UseLocalKaleido)' == ''">false</UseLocalKaleido>
+        <KaleidoSourceRoot Condition="'$(KaleidoSourceRoot)' == ''">$(MSBuildThisFileDirectory)..\Kaleido\src\</KaleidoSourceRoot>
+        <KaleidoSourceRoot>$([MSBuild]::NormalizeDirectory('$(KaleidoSourceRoot)'))</KaleidoSourceRoot>
+        <KaleidoAnalyzersProject Condition="'$(KaleidoAnalyzersProject)' == ''">$(KaleidoSourceRoot)..\tools\analyzers\Kaleido.Analyzers\Kaleido.Analyzers.csproj</KaleidoAnalyzersProject>
+        <KaleidoAnalyzersProject>$([MSBuild]::NormalizePath('$(KaleidoAnalyzersProject)'))</KaleidoAnalyzersProject>
+    </PropertyGroup>
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>13</LangVersion>
         <Deterministic>true</Deterministic>
         <AnalysisLevel>latest-recommended</AnalysisLevel>
         <NuGetAudit>true</NuGetAudit>
