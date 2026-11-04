@@ -6,6 +6,7 @@ using Kaleido.Observability.OpenTelemetry;
 using Kaleido.Samples.PriorAuth.Auth;
 using Kaleido.Samples.PriorAuth.Router;
 using Microsoft.Net.Http.Headers;
+using static Kaleido.Http.KaleidoCorrelationHeaders;
 using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,11 +49,14 @@ builder.Services
 
 // ZeroTrust: the router filters the aggregate per caller with the leaf rules;
 // undeclared capabilities are not exposed.
-builder.Services.AddKaleido(builder.Configuration, o =>
+builder.Services.AddKaleido(builder.Configuration, new()
     {
-        o.AuthorizationMode = KaleidoAuthorizationMode.ZeroTrust;
-        o.Assemblies = [typeof(Program).Assembly];
+        AuthorizationMode = KaleidoAuthorizationMode.ZeroTrust,
+        Assemblies = [typeof(Program).Assembly],
     })
+    // The router has no steps or queries and writes no events of its own: memory, chosen explicitly
+    // (ADR 0028). It leaves Kaleido altogether when it becomes the development gateway (#34).
+    .AddInMemoryStores()
     // AddHttp registers the HTTP service layer MapRegistry resolves
     // (IProcessorResponseFactory, authorizer) + the Exception/
     // Observability middleware so errors render as Kaleido error JSON.
@@ -64,7 +68,7 @@ builder.Services.AddKaleido(builder.Configuration, o =>
     .ForwardCallerToken()
     // AI agents (MCP clients) get the aggregate as tools at /mcp, filtered per caller, and every
     // tool runs as the agent's user — the router's service token is never used for them.
-    .AddMcp(o => o.ServerName = "priorauth")
+    .AddMcp(new() { ServerName = "priorauth" })
     .AddOpenTelemetry();
 
 // Registry aggregation is a service-to-service call: always stamp the
@@ -146,10 +150,10 @@ if (app.Environment.IsDevelopment())
 
 // The router learns about downstream deployments by checking each downstream's registry (ETag,
 // an unchanged one answers 304) at most every 30 seconds; the MCP tool list follows within that time.
-app.MapKaleidoHttp(o =>
+app.MapKaleidoHttp(new()
 {
-    o.AggregateRegistry = true;
-    o.RegistryCacheTtl = TimeSpan.FromSeconds(30);
+    AggregateRegistry = true,
+    RegistryCacheTtl = TimeSpan.FromSeconds(30),
 });
 app.MapKaleidoMcp("/mcp");
 app.MapReverseProxy();

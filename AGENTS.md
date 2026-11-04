@@ -41,8 +41,9 @@
   - `dotnet run --project src/Seeder/Kaleido.Samples.PriorAuth.Seeder.csproj -- --domains=ReferenceData,CodeSet,Configuration,ProviderSearch,MemberService`
 - Shared SQLite files live under `data/`
 - Compose mounts that host directory into service containers as `/app/data`
-- Runtime-created DBs like `eventcollector.db`, `intake.db`, `intake-process.db`, `radiology.db`, and `radiology-process.db` may appear in `data/` after services start
-- The `*-process.db` files are the Kaleido context stores (process state, idempotent results, event outbox). They are created with `EnsureCreated`, which never adds tables to an existing file: after a store schema change (e.g. the `OutboxEvents` table) delete them; they are recreated at startup
+- Runtime-created DBs like `eventcollector.db`, `intake.db`, `radiology.db`, `history.db` and every service's `{service}-process.db` may appear in `data/` after services start
+- The `*-process.db` files are the Kaleido stores (process state, idempotent results, event outbox), one per service: every service writes its events, a query-only one included (no1ross/Kaleido#552). `AddPriorAuthStores("{Service}Process")` (`src/Common/PriorAuthStores.cs`) registers them and a relay on that database that publishes its events to the EventCollector (`HttpEventPublisher`). Interim (#28): one shared database, `AddSqliteStores` (no1ross/Kaleido#558) and one relay host (#31) follow. The router keeps in-memory stores and no relay, so its `/health` is `Degraded` (`kaleido-outbox`) until it leaves Kaleido (#34)
+- They are created with `EnsureCreated`, which never adds tables to an existing file: after a store schema change (e.g. the Kaleido master upgrade, #22) delete them; they are recreated at startup
 - The services' own databases (`intake.db`, `radiology.db`, `history.db`) are created the same way: after an entity change, delete the affected file (and its `*-process.db`, so no process points at missing data)
 
 ## History records
@@ -101,7 +102,7 @@
 ## Sensitive data in events
 - Member fields are classified with `[Phi]` (name, display name, date of birth) and `[Pii]` (email, phone, address) from `src/Common/Compliance/PriorAuthDataClassifications.cs`.
 - Kaleido redacts classified values in event payloads before the outbox write ([ADR 0013](https://github.com/no1ross/Kaleido/blob/master/docs/decisions/0013-event-payloads-classified-and-redacted.md)); responses to callers keep the real values.
-- Every event-publishing service calls `AddPriorAuthEventRedaction()` (`src/Common/Compliance/PriorAuthEventRedaction.cs`): events keep PII and erase PHI. It is the event policy only (`AddEventRedaction`, ADR 0025); log redaction (`AddRedaction`) would be configured separately. To pseudonymize instead, map a classification to an HMAC or encrypting redactor there.
+- Every service calls `AddPriorAuthEventRedaction()` (`src/Common/Compliance/PriorAuthEventRedaction.cs`): events keep PII and erase PHI. It is the event policy only (`AddEventRedaction`, ADR 0025); log redaction (`AddRedaction`) would be configured separately. To pseudonymize instead, map a classification to an HMAC or encrypting redactor there.
 
 ## Configuration per environment
 - **Containers run as Production** (images are built `Release`; compose sets no `ASPNETCORE_ENVIRONMENT`), so they read only each host's `appsettings.json`: container addresses (`http://member:8080`, `http://eventcollector:8080`), `data/...` paths (`/app/data` in the container) and the dashboard's OTLP endpoint `http://aspire-dashboard:18889`. Swagger is Development-only, so it is off in containers.

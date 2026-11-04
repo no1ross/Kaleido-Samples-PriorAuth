@@ -23,12 +23,6 @@ var radiologyConnectionString =
         PriorAuthErrorCodes.MissingConnectionString,
         "ConnectionStrings:Radiology is required.");
 
-var processConnectionString =
-    builder.Configuration.GetConnectionString("RadiologyProcess")
-    ?? throw new KaleidoConfigurationException(
-        PriorAuthErrorCodes.MissingConnectionString,
-        "ConnectionStrings:RadiologyProcess is required.");
-
 // Who created and last changed each row, through which application, and when (Common/Audit).
 builder.Services.AddPriorAuthAuditing();
 builder.Services.AddDbContext<RadiologyDbContext>(
@@ -82,26 +76,23 @@ builder.Services.AddHttpClient("PriorAuthEventCollector", client =>
         builder.Configuration["Services:EventCollector:BaseUrl"]
         ?? "http://localhost:8086"));
 
-builder.Services.AddKaleido(builder.Configuration, o =>
+builder.Services.AddKaleido(builder.Configuration, new()
     {
-        o.ServiceName = "radiology";
-        o.Assemblies = [typeof(Program).Assembly, typeof(RadiologyDbContext).Assembly];
-        o.TypeFilter = type => type.Namespace?.StartsWith("Kaleido.Samples.PriorAuth.Radiology", StringComparison.Ordinal) ?? false;
-        o.AuthorizationMode = KaleidoAuthorizationMode.ZeroTrust;
-        o.DefaultAuthorization = new(null, ["radiology"]);
+        ServiceName = "radiology",
+        Assemblies = [typeof(Program).Assembly, typeof(RadiologyDbContext).Assembly],
+        TypeFilter = type => type.Namespace?.StartsWith("Kaleido.Samples.PriorAuth.Radiology", StringComparison.Ordinal) ?? false,
+        AuthorizationMode = KaleidoAuthorizationMode.ZeroTrust,
+        DefaultAuthorization = new(null, ["radiology"]),
     })
-    .AddEventPublisher<HttpEventPublisher>()
+    // Process state, Kaleido's outbox and idempotent requests in one SQLite database: a step's state
+    // and its event commit together (ADR 0023); a relay publishes its events (Common/PriorAuthStores).
+    .AddPriorAuthStores("RadiologyProcess")
     // Events: PHI erased, PII kept; logs are configured separately (ADR 0025).
     .AddPriorAuthEventRedaction()
     // Full pages are counted with one SELECT COUNT(*) (EF Core's operators, #352).
     .AddPriorAuthEfCoreQueries()
     // Sample: return framework diagnostics (e.g. pro_step_not_available) in frameworkMessages.
-    .AddHttp(o => o.IncludeFrameworkMessages = true)
-    // Process state, Kaleido's outbox and idempotent requests in one SQLite database: a step's state
-    // and its event commit together (ADR 0023).
-    .AddSqliteContextStore(processConnectionString)
-    .AddSqliteOutboxStore(processConnectionString)
-    .AddSqliteIdempotencyStore(processConnectionString)
+    .AddHttp(new() { IncludeFrameworkMessages = true })
     .AddHttpClients()
     // Outgoing calls: an on-behalf-of dev token for the caller (user + roles + this service as actor),
     // a service token for the service's own calls (ADR 0022).
