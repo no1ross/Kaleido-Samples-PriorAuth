@@ -58,6 +58,25 @@ describe('ProcessService', () => {
         expect(idempotentExecute.post).toHaveBeenCalledWith(expect.stringContaining(step.executeUrl), { processStep: {} }, 'p1');
     });
 
+    it('continues on the target with the next steps of the hand-off answer, without reading its state', () => {
+        const mriQuestions = { informationRequestId: 'mri|1', exchangeId: 'exchange-1', items: [] };
+        idempotentExecute.post.mockReturnValue(of({
+            processId: 'p1',
+            status: 'completed',
+            targetProcessorName: 'radiology',
+            requiredStep: { name: 'CaptureMriInfoStep', executeUrl: '/radiology/processes/steps/capturemriinfostep', informationRequest: mriQuestions },
+            availableSteps: [],
+            businessMessages: [],
+            frameworkMessages: []
+        }));
+
+        TestBed.inject(ProcessService).executeStep('CaptureMemberStep', { processStep: {} } as never).subscribe();
+
+        expect(processState.setProcessFlow).toHaveBeenCalledWith('radiology', 'CaptureMriInfoStep', []);
+        expect(processState.setInformationRequest).toHaveBeenCalledWith('CaptureMriInfoStep', mriQuestions);
+        // afterEach's http.verify(): no request to Radiology's state endpoint.
+    });
+
     it('reloads the process state and says so when the outcome of an earlier attempt is unknown', () => {
         idempotentExecute.post.mockReturnValue(throwError(() => new HttpErrorResponse({
             status: 409,

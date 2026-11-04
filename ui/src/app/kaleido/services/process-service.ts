@@ -102,28 +102,11 @@ export class ProcessService {
                     ]);
                     this.logStepOutcome(result);
 
-                    if (result.targetProcessorName) {
-                        // Cross-processor handoff — fetch the target processor's
-                        // state to get the authoritative requiredStep, available
-                        // steps, and any pending information request before navigating.
-                        // This also switches currentProcessorName in state so
-                        // subsequent steps go to the right processor automatically.
-                        return this.fetchProcessorState(
-                            result.targetProcessorName,
-                            result.processId)
-                            .pipe(
-                                map(targetState => {
-                                    this.applyNextSteps(
-                                        result.targetProcessorName!,
-                                        targetState.requiredStep,
-                                        targetState.availableSteps);
-                                    return result;
-                                }));
-                    }
-
-                    // Local step — use the response directly.
+                    // After a hand-off the answer is the target's (#27, Kaleido #198): its required
+                    // step (with any questions), its available steps and their URLs. Applying them
+                    // switches currentProcessorName, so the next steps go to the target.
                     this.applyNextSteps(
-                        processorName,
+                        result.targetProcessorName ?? processorName,
                         result.requiredStep,
                         result.availableSteps);
 
