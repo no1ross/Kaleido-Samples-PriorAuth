@@ -7,26 +7,25 @@
     <File Path="global.json" />
     <File Path="nuget.config" />
     <File Path="README.md" />
+    <File Path=".dockerignore" />
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
     <File Path="AGENTS.md" />
   </Folder>
-  <Folder Name="/compose/">
-    <Project Path="compose/Kaleido.Samples.PriorAuth.Compose.dcproj" Id="dfa3ef7b-d8d9-8b28-30b1-e97146d284f8">
-      <Build />
-    </Project>
-  </Folder>
   <Folder Name="/Kaleido/">
-    <Project Path="../Kaleido/src/Kaleido/Kaleido.csproj" />
-    <Project Path="../Kaleido/src/Kaleido.Http/Kaleido.Http.csproj" />
     <Project Path="../Kaleido/src/Kaleido.Http.Abstractions/Kaleido.Http.Abstractions.csproj" />
     <Project Path="../Kaleido/src/Kaleido.Http.Client/Kaleido.Http.Client.csproj" />
     <Project Path="../Kaleido/src/Kaleido.Http.Mcp/Kaleido.Http.Mcp.csproj" />
     <Project Path="../Kaleido/src/Kaleido.Http.Registry/Kaleido.Http.Registry.csproj" />
+    <Project Path="../Kaleido/src/Kaleido.Http/Kaleido.Http.csproj" />
     <Project Path="../Kaleido/src/Kaleido.Observability.OpenTelemetry/Kaleido.Observability.OpenTelemetry.csproj" />
     <Project Path="../Kaleido/src/Kaleido.Provider.SQLite/Kaleido.Provider.SQLite.csproj" />
+    <Project Path="../Kaleido/src/Kaleido/Kaleido.csproj" />
   </Folder>
   <Folder Name="/Kaleido/analyzers/">
-    <Project Path="../Kaleido/tools/analyzers/Kaleido.Analyzers/Kaleido.Analyzers.csproj" />
     <Project Path="../Kaleido/tools/analyzers/Kaleido.Analyzers.Source/Kaleido.Analyzers.Source.csproj" />
+    <Project Path="../Kaleido/tools/analyzers/Kaleido.Analyzers/Kaleido.Analyzers.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Common/Kaleido.Samples.PriorAuth.Common.csproj" />
