@@ -25,6 +25,13 @@
 - `package.json` `overrides` pin `vite` 7.3.7 and `@modelcontextprotocol/sdk` 1.32.1, the fixed versions that `@angular/build`/`@angular/cli` 21.2.28 depend on. **Remove both overrides when Angular is updated to 21.2.28 or later**: they would otherwise hold back the Vite and MCP SDK versions Angular asks for.
 - Security overrides (#20): `undici@6` 6.29.1 and `undici@7` 7.30.1 (`@angular/build` 21.2.28 still pins a vulnerable 7.x; also `jsdom`, `node-gyp`), `fast-uri@3` 3.1.9 (`ajv`), `body-parser@2` 2.4.0 (`express` under the MCP SDK). Remove each once its dependents ask for the fixed version or later. fast-uri 3.1.9 and body-parser 2.4.0 were taken under 7 days old: a one-time exception for these security fixes, approved by the maintainer.
 
+## Local Kaleido source
+- `UseLocalKaleido=true` builds against the Kaleido repository next to this one instead of the packages. `Directory.Build.targets` turns each `Kaleido*` PackageReference into a ProjectReference to `$(KaleidoSourceRoot)<Name>\<Name>.csproj` (default `..\Kaleido\src\`). The consumer analyzers (KAL2xxx), which the `Kaleido` package brings through `Kaleido.Analyzers`, come from `..\Kaleido\tools\analyzers\Kaleido.Analyzers` as an Analyzer reference (`KaleidoAnalyzersProject`). A missing project fails the build with its path.
+- Three ways to switch, the last wins: copy `Kaleido.Local.props.example` to the untracked `Kaleido.Local.props` (the default; delete it to go back), the `UseLocalKaleido` environment variable, `-p:UseLocalKaleido=true|false`. After switching, VS needs a restore or reload of the projects.
+- `Kaleido.Samples.PriorAuth.Local.slnx` adds the Kaleido projects to the solution for browsing and debugging. Keep its sample projects in step with `Kaleido.Samples.PriorAuth.slnx`.
+- CI and containers always use the packages: `.dockerignore` keeps `Kaleido.Local.props` out of the images, and `../Kaleido` is outside their build context.
+- Local Kaleido can be ahead of `KaleidoVersion` (`Directory.Packages.props`). A build error then means the sample needs updating for the newer API; it is not caused by the switch.
+
 ## Local run workflow
 - Prefer the compose file under `compose/` (`docker-compose.yml`; `docker-compose.override.yml` is for local overrides and sets nothing by default): it runs the router and every service as Production. The UI is not in compose and the router neither serves nor proxies it: run it with `npm start` in `ui/` (or Start on the esproj) at `http://localhost:4200` (see [Configuration per environment](#configuration-per-environment))
 - For backend-only work, `dotnet run` the affected services instead

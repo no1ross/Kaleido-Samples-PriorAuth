@@ -1,0 +1,25 @@
+<Project>
+    <!-- Local Kaleido source (AGENTS.md, "Local Kaleido source"). With UseLocalKaleido=true every Kaleido
+         package reference becomes a reference to its project under $(KaleidoSourceRoot)
+         (<Name>\<Name>.csproj). The consumer analyzers (KAL2xxx), which the Kaleido package brings with
+         its Kaleido.Analyzers dependency, come from $(KaleidoAnalyzersProject) instead. -->
+    <ItemGroup Condition="'$(UseLocalKaleido)' == 'true'">
+        <_KaleidoPackageCandidate Include="@(PackageReference)">
+            <IsKaleido>$([System.Text.RegularExpressions.Regex]::IsMatch('%(Identity)', '^Kaleido(\.|$)'))</IsKaleido>
+        </_KaleidoPackageCandidate>
+        <_KaleidoLocalPackage Include="@(_KaleidoPackageCandidate->WithMetadataValue('IsKaleido', 'True'))" />
+        <PackageReference Remove="@(_KaleidoLocalPackage)" />
+        <_KaleidoLocalLibrary Include="@(_KaleidoLocalPackage)" Exclude="Kaleido.Analyzers" />
+        <ProjectReference Include="@(_KaleidoLocalLibrary->'$(KaleidoSourceRoot)%(Identity)\%(Identity).csproj')" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(UseLocalKaleido)' == 'true' And '@(_KaleidoLocalPackage)' != ''">
+        <ProjectReference Include="$(KaleidoAnalyzersProject)" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" />
+    </ItemGroup>
+
+    <Target Name="KaleidoCheckLocalSource" BeforeTargets="_GenerateRestoreProjectSpec;ResolveProjectReferences" Condition="'$(UseLocalKaleido)' == 'true' And '@(_KaleidoLocalPackage)' != ''">
+        <ItemGroup>
+            <_KaleidoLocalProject Include="@(_KaleidoLocalLibrary->'$(KaleidoSourceRoot)%(Identity)\%(Identity).csproj');$(KaleidoAnalyzersProject)" />
+        </ItemGroup>
+        <Error Condition="!Exists('%(_KaleidoLocalProject.Identity)')" Text="UseLocalKaleido is true but the Kaleido project '%(_KaleidoLocalProject.FullPath)' does not exist. Set KaleidoSourceRoot (Kaleido.Local.props or -p:KaleidoSourceRoot=...) to the Kaleido repository's src folder, or set UseLocalKaleido=false to use the packages." />
+    </Target>
+</Project>
