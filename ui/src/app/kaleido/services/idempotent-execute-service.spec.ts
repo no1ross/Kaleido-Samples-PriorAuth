@@ -60,10 +60,10 @@ describe('IdempotentExecuteService', () => {
         http.expectNone(url);
         vi.advanceTimersByTime(1);
         const retry = http.expectOne(url);
-        retry.flush({ outcome: 'completed' });
+        retry.flush({ status: 'completed' });
 
         expect(keyOf(retry)).toBe(keyOf(first));
-        expect(result.value).toEqual({ outcome: 'completed' });
+        expect(result.value).toEqual({ status: 'completed' });
     });
 
     it('waits the default delay when Retry-After cannot be read', () => {
@@ -85,10 +85,10 @@ describe('IdempotentExecuteService', () => {
 
         vi.advanceTimersByTime(DEFAULT_RETRY_DELAY_MS);
         const retry = http.expectOne(url);
-        retry.flush({ outcome: 'completed' });
+        retry.flush({ status: 'completed' });
 
         expect(keyOf(retry)).toBe(keyOf(first));
-        expect(result.value).toEqual({ outcome: 'completed' });
+        expect(result.value).toEqual({ status: 'completed' });
     });
 
     it('sends an identical call made while one is in flight (a double submit) with the same key', () => {

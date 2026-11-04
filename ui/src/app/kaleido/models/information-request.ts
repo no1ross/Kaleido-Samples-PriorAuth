@@ -52,6 +52,8 @@ export interface InformationItem {
 
 export interface InformationRequest {
     informationRequestId: string;
+    /** Kaleido's id for this asking of the questions; answers echo it, or they are refused as stale. */
+    exchangeId: string;
     title?: string;
     items: InformationItem[];
 }
@@ -68,5 +70,7 @@ export interface InformationResponseItem {
 /** The payload of an information step: the answers to the pending request. */
 export interface InformationResponse {
     informationRequestId: string;
+    /** The exchange id received with the questions (pro_information_response_stale otherwise). */
+    exchangeId: string;
     items: InformationResponseItem[];
 }

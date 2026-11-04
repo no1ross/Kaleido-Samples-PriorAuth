@@ -7,7 +7,6 @@ namespace Kaleido.Samples.PriorAuth.Member.Queryable.ViewSources;
 
 [QueryView(
     DisplayName = "Member Search",
-    Version = "1.0.0",
     Description = "Searchable member enrollment results.",
     DefaultSortField = nameof(MemberQueryContext.LastName))]
 [Pageable(DefaultSize = 25, MaxSize = 250)]

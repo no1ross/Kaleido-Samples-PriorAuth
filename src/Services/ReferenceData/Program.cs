@@ -41,21 +41,21 @@ builder.Services.AddHttpClient("PriorAuthEventCollector", client =>
         builder.Configuration["Services:EventCollector:BaseUrl"]
         ?? "http://localhost:8086"));
 
-builder.Services.AddKaleido(builder.Configuration, o =>
+builder.Services.AddKaleido(builder.Configuration, new()
     {
-        o.ServiceName = "referencedata";
-        o.Assemblies = new System.Reflection.Assembly[] { typeof(Program).Assembly, typeof(ReferenceDataDbContext).Assembly };
-        o.TypeFilter = type => type.Namespace?.StartsWith("Kaleido.Samples.PriorAuth.ReferenceData", StringComparison.Ordinal) ?? false;
-        o.AuthorizationMode = KaleidoAuthorizationMode.ZeroTrust;
-        o.DefaultAuthorization = new(DevAuthPolicies.AuthenticatedUser, []);
+        ServiceName = "referencedata",
+        Assemblies = new System.Reflection.Assembly[] { typeof(Program).Assembly, typeof(ReferenceDataDbContext).Assembly },
+        TypeFilter = type => type.Namespace?.StartsWith("Kaleido.Samples.PriorAuth.ReferenceData", StringComparison.Ordinal) ?? false,
+        AuthorizationMode = KaleidoAuthorizationMode.ZeroTrust,
+        DefaultAuthorization = new(DevAuthPolicies.AuthenticatedUser, []),
     })
-    .AddEventPublisher<HttpEventPublisher>()
+    .AddPriorAuthStores("ReferenceDataProcess")
     // Events: PHI erased, PII kept; logs are configured separately (ADR 0025).
     .AddPriorAuthEventRedaction()
     // Full pages are counted with one SELECT COUNT(*) (EF Core's operators, #352).
     .AddPriorAuthEfCoreQueries()
     // Sample: return framework diagnostics (e.g. pro_step_not_available) in frameworkMessages.
-    .AddHttp(o => o.IncludeFrameworkMessages = true)
+    .AddHttp(new() { IncludeFrameworkMessages = true })
     .AddOpenTelemetry();
 
 var app = builder.Build();
@@ -73,5 +73,8 @@ if (app.Environment.IsDevelopment())
     app.UseDevSwaggerUI();
 }
 
+
+// Kaleido's stores (process state, idempotency, outbox): created when the database is new.
+await app.Services.EnsurePriorAuthStoresCreatedAsync();
 
 app.Run();

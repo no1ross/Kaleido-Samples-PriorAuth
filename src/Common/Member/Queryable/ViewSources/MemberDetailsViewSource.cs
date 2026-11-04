@@ -10,7 +10,6 @@ namespace Kaleido.Samples.PriorAuth.Member.Queryable.ViewSources;
 
 [QueryView(
     DisplayName = "Member Details",
-    Version = "1.0.0",
     Description = "Detailed member enrollment information.")]
 internal sealed class MemberDetailsViewSource(
     MemberDbContext dbContext)

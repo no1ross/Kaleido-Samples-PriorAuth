@@ -31,7 +31,7 @@ public sealed class RadiologyTestBed : IDisposable
 
     public List<MriProcedureCodeRuleQueryContext> MriRules { get; } = [];
 
-    public StepExecutionOutcome HistoryOutcome { get; set; } = StepExecutionOutcome.Completed;
+    public StepExecutionStatus HistoryStatus { get; set; } = StepExecutionStatus.Completed;
 
     public ProcessStepContext Context { get; } = Steps.Context();
 
@@ -48,7 +48,7 @@ public sealed class RadiologyTestBed : IDisposable
             .View<QuestionnaireDefinitionViewParameters, QuestionnaireDefinitionView>("Configuration", "QuestionnaireDefinitionQueryContextSource", "QuestionnaireDefinitionViewSource",
                 parameters => QuestionnairesByStep.TryGetValue(parameters?.StepName ?? string.Empty, out var found) ? [found] : [])
             .Source<MriProcedureCodeRuleQueryContext>("Configuration", "MriProcedureCodeRuleQueryContextSource", _ => MriRules)
-            .Step<UpsertPriorAuthRecordStep>("History", _ => FakeKaleido.Answer(nameof(UpsertPriorAuthRecordStep), HistoryOutcome));
+            .Step<UpsertPriorAuthRecordStep>("History", _ => FakeKaleido.Answer(nameof(UpsertPriorAuthRecordStep), HistoryStatus));
     }
 
     public static CancellationToken Token => TestContext.Current.CancellationToken;

@@ -6,6 +6,7 @@ import { InformationRequestForm } from './information-request-form';
 // The MRI questions: laterality applies only when the body part is not the spine.
 const mri: InformationRequest = {
     informationRequestId: 'mri|1',
+    exchangeId: 'exchange-1',
     items: [
         {
             id: 'BodyPart', text: 'Which body part?', type: 'choice', repeats: false, items: [],

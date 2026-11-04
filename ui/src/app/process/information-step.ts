@@ -78,6 +78,7 @@ export class InformationStep {
                 processId,
                 processStep: {
                     informationRequestId: request.informationRequestId,
+                    exchangeId: request.exchangeId,
                     items
                 }
             })

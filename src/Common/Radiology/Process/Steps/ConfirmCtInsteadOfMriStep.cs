@@ -6,14 +6,14 @@ namespace Kaleido.Samples.PriorAuth.Radiology.Process.Steps;
 /// </summary>
 [ProcessStep(
     DisplayName = "Confirm CT Instead Of MRI",
-    Description = "Confirms that a CT scan, not an MRI, is being requested.",
-    Version = "2.0.0")]
+    Description = "Confirms that a CT scan, not an MRI, is being requested.")]
 [AvailableAfter<StartRadiologyIntakeStep>]
 [AvailableUntil<CaptureRequestingProviderStep>]
 [Repeatable]
 public sealed record ConfirmCtInsteadOfMriStep : IInformationStep
 {
     public required string InformationRequestId { get; init; }
+    public required string ExchangeId { get; init; }
 
     public IReadOnlyList<InformationResponseItem> Items { get; init; } = [];
 }

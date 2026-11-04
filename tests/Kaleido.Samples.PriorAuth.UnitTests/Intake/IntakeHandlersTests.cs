@@ -30,7 +30,7 @@ public sealed class IntakeHandlersTests : IDisposable
     private readonly List<ProcedureCodeQueryContext> _codes = [];
     private readonly List<ProductCodeMappingQueryContext> _mappings = [];
     private readonly ProcessStepContext _context = Steps.Context();
-    private StepExecutionOutcome _historyOutcome = StepExecutionOutcome.Completed;
+    private StepExecutionStatus _historyStatus = StepExecutionStatus.Completed;
 
     public IntakeHandlersTests()
     {
@@ -39,7 +39,7 @@ public sealed class IntakeHandlersTests : IDisposable
                 parameters => _members.Where(x => x.MemberId == parameters?.MemberId && x.MemberEnrollmentId == parameters?.MemberEnrollmentId))
             .Source<ProcedureCodeQueryContext>("CodeSet", "ProcedureCodeQueryContextSource", _ => _codes)
             .Source<ProductCodeMappingQueryContext>("Configuration", "ProductCodeMappingQueryContextSource", _ => _mappings)
-            .Step<UpsertPriorAuthRecordStep>("History", step => FakeKaleido.Answer(nameof(UpsertPriorAuthRecordStep), _historyOutcome));
+            .Step<UpsertPriorAuthRecordStep>("History", step => FakeKaleido.Answer(nameof(UpsertPriorAuthRecordStep), _historyStatus));
     }
 
     public void Dispose() => _database.Dispose();
@@ -109,7 +109,7 @@ public sealed class IntakeHandlersTests : IDisposable
     public async Task CaptureMemberIsRolledBackWhenHistoryDoesNotRecord()
     {
         var member = AddMember();
-        _historyOutcome = StepExecutionOutcome.Rejected;
+        _historyStatus = StepExecutionStatus.Rejected;
 
         var result = await CaptureMemberAsync(member.MemberId, member.MemberEnrollmentId);
 
@@ -149,7 +149,7 @@ public sealed class IntakeHandlersTests : IDisposable
         var result = await CaptureServiceAsync("73721", MriBodyPart.Knee);
 
         Assert.True(result.Succeeded);
-        Assert.Equal("radiology", result.TargetProcessorName);
+        Assert.Equal("radiology", result.HandOffContinuation?.TargetProcessorName);
         var start = Assert.IsType<StartRadiologyIntakeStep>(_kaleido.SentSteps.Single(x => x.Client == "radiology").Step);
         Assert.Equal(member.MemberId, start.MemberId);
         Assert.Equal(DateOfService, start.DateOfService);
@@ -163,12 +163,12 @@ public sealed class IntakeHandlersTests : IDisposable
     public async Task CaptureRequestedServiceKeepsNothingWhenTheProductRefusesTheRequest()
     {
         AddCode("73721", processorName: "radiology");
-        _kaleido.Step<StartRadiologyIntakeStep>("radiology", _ => FakeKaleido.Answer(nameof(StartRadiologyIntakeStep), StepExecutionOutcome.Rejected));
+        _kaleido.Step<StartRadiologyIntakeStep>("radiology", _ => FakeKaleido.Answer(nameof(StartRadiologyIntakeStep), StepExecutionStatus.Rejected));
 
         var result = await CaptureServiceAsync("73721");
 
         Assert.True(result.Rejected);
-        Assert.Null(result.TargetProcessorName);
+        Assert.Null(result.HandOffContinuation);
         Assert.Empty(_database.NewContext().IntakeSessionProcedures);
     }
 

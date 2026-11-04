@@ -9,14 +9,14 @@ namespace Kaleido.Samples.PriorAuth.Radiology.Process.Steps;
 /// </summary>
 [ProcessStep(
     DisplayName = "Capture MRI Information",
-    Description = "Answers the MRI questions configured for the requested service.",
-    Version = "2.0.0")]
+    Description = "Answers the MRI questions configured for the requested service.")]
 [AvailableAfter<StartRadiologyIntakeStep>]
 [AvailableUntil<CaptureRequestingProviderStep>]
 [Repeatable]
 public sealed record CaptureMriInfoStep : IInformationStep
 {
     public required string InformationRequestId { get; init; }
+    public required string ExchangeId { get; init; }
 
     public IReadOnlyList<InformationResponseItem> Items { get; init; } = [];
 }

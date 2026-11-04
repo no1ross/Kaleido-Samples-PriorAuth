@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Kaleido.Samples.PriorAuth.Configuration.Queryable.ContextSources;
 
 [QuerySource(
-    Version = "1.0.0",
     DisplayName = "Clinical Pathway Transitions",
     Description = "Which questionnaire a clinical pathway asks next after a questionnaire's answers, or that it is done.",
     Source = "Prior Authorization Configuration")]

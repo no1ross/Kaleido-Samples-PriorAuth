@@ -11,8 +11,7 @@ namespace Kaleido.Samples.PriorAuth.Radiology.Process.Steps;
 /// </remarks>
 [ProcessStep(
     DisplayName = "Capture Servicing Provider",
-    Description = "Captures the servicing provider: the facility where the service will be performed. Its network status is recorded with it.",
-    Version = "3.0.0")]
+    Description = "Captures the servicing provider: the facility where the service will be performed. Its network status is recorded with it.")]
 [AvailableAfter<CaptureRequestingProviderStep>]
 [AvailableUntil<SubmitPriorAuthorizationStep>]
 [Repeatable]

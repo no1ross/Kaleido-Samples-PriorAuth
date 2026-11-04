@@ -1,0 +1,58 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="Kaleido.Local.props.example" />
+    <File Path="global.json" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+    <File Path=".dockerignore" />
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="AGENTS.md" />
+  </Folder>
+  <Folder Name="/Kaleido/">
+    <Project Path="../Kaleido/src/Kaleido.Http.Abstractions/Kaleido.Http.Abstractions.csproj" />
+    <Project Path="../Kaleido/src/Kaleido.Http.Client/Kaleido.Http.Client.csproj" />
+    <Project Path="../Kaleido/src/Kaleido.Http.Mcp/Kaleido.Http.Mcp.csproj" />
+    <Project Path="../Kaleido/src/Kaleido.Http.Registry/Kaleido.Http.Registry.csproj" />
+    <Project Path="../Kaleido/src/Kaleido.Http/Kaleido.Http.csproj" />
+    <Project Path="../Kaleido/src/Kaleido.Observability.OpenTelemetry/Kaleido.Observability.OpenTelemetry.csproj" />
+    <Project Path="../Kaleido/src/Kaleido.Provider.SQLite/Kaleido.Provider.SQLite.csproj" />
+    <Project Path="../Kaleido/src/Kaleido/Kaleido.csproj" />
+  </Folder>
+  <Folder Name="/Kaleido/analyzers/">
+    <Project Path="../Kaleido/tools/analyzers/Kaleido.Analyzers.Source/Kaleido.Analyzers.Source.csproj" />
+    <Project Path="../Kaleido/tools/analyzers/Kaleido.Analyzers/Kaleido.Analyzers.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Common/Kaleido.Samples.PriorAuth.Common.csproj" />
+    <Project Path="src/EventCollector/Kaleido.Samples.PriorAuth.EventCollector.csproj" />
+    <Project Path="src/Router/Kaleido.Samples.PriorAuth.Router.csproj" />
+    <Project Path="src/Seeder/Kaleido.Samples.PriorAuth.Seeder.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/">
+    <Project Path="src/Services/CodeSet/Kaleido.Samples.PriorAuth.CodeSet.csproj" />
+    <Project Path="src/Services/Configuration/Kaleido.Samples.PriorAuth.Configuration.csproj" />
+    <Project Path="src/Services/History/Kaleido.Samples.PriorAuth.History.csproj" />
+    <Project Path="src/Services/Intake/Kaleido.Samples.PriorAuth.Intake.csproj" />
+    <Project Path="src/Services/Member/Kaleido.Samples.PriorAuth.Member.csproj" />
+    <Project Path="src/Services/Provider/Kaleido.Samples.PriorAuth.Provider.csproj" />
+    <Project Path="src/Services/Radiology/Kaleido.Samples.PriorAuth.Radiology.csproj" />
+    <Project Path="src/Services/ReferenceData/Kaleido.Samples.PriorAuth.ReferenceData.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <File Path="tests/Directory.Build.props" />
+    <File Path="tests/README.md" />
+    <Project Path="tests/Kaleido.Samples.PriorAuth.FunctionalTests/Kaleido.Samples.PriorAuth.FunctionalTests.csproj" />
+    <Project Path="tests/Kaleido.Samples.PriorAuth.UnitTests/Kaleido.Samples.PriorAuth.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/ui/">
+    <Project Path="ui/priorauth-ui.esproj">
+      <Build />
+      <Deploy />
+    </Project>
+  </Folder>
+</Solution>

@@ -51,11 +51,30 @@ describe('ProcessService', () => {
     afterEach(() => http.verify());
 
     it('sends execute calls through the idempotent sender, with the current process id', () => {
-        idempotentExecute.post.mockReturnValue(of({ processId: 'p1', outcome: 'completed', businessMessages: [], frameworkMessages: [], availableSteps: [] }));
+        idempotentExecute.post.mockReturnValue(of({ processId: 'p1', status: 'completed', businessMessages: [], frameworkMessages: [], availableSteps: [] }));
 
         TestBed.inject(ProcessService).executeStep('CaptureMemberStep', { processStep: {} } as never).subscribe();
 
         expect(idempotentExecute.post).toHaveBeenCalledWith(expect.stringContaining(step.executeUrl), { processStep: {} }, 'p1');
+    });
+
+    it('continues on the target with the next steps of the hand-off answer, without reading its state', () => {
+        const mriQuestions = { informationRequestId: 'mri|1', exchangeId: 'exchange-1', items: [] };
+        idempotentExecute.post.mockReturnValue(of({
+            processId: 'p1',
+            status: 'completed',
+            targetProcessorName: 'radiology',
+            requiredStep: { name: 'CaptureMriInfoStep', executeUrl: '/radiology/processes/steps/capturemriinfostep', informationRequest: mriQuestions },
+            availableSteps: [],
+            businessMessages: [],
+            frameworkMessages: []
+        }));
+
+        TestBed.inject(ProcessService).executeStep('CaptureMemberStep', { processStep: {} } as never).subscribe();
+
+        expect(processState.setProcessFlow).toHaveBeenCalledWith('radiology', 'CaptureMriInfoStep', []);
+        expect(processState.setInformationRequest).toHaveBeenCalledWith('CaptureMriInfoStep', mriQuestions);
+        // afterEach's http.verify(): no request to Radiology's state endpoint.
     });
 
     it('reloads the process state and says so when the outcome of an earlier attempt is unknown', () => {
@@ -71,6 +90,6 @@ describe('ProcessService', () => {
 
         expect(processState.setProcessFlow).toHaveBeenCalledWith('intake', 'CaptureRequestedServiceStep', []);
         expect(processState.setProcessMessages).toHaveBeenCalledWith([expect.objectContaining({ code: IDEMPOTENCY_OUTCOME_UNKNOWN, type: 'warning' })]);
-        expect(failure).toEqual(expect.objectContaining({ outcome: 'unknown' }));
+        expect(failure).toEqual(expect.objectContaining({ status: 'unknown' }));
     });
 });

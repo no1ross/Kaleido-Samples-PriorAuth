@@ -54,6 +54,7 @@ public sealed class PriorAuthFlow(SampleClient client)
         (await client.ExecuteAsync("radiology", new RadiologySteps.CaptureMriInfoStep
         {
             InformationRequestId = request.InformationRequestId,
+            ExchangeId = request.ExchangeId,
             Items = Answers.For(request, ("BodyPart", "Knee"), ("Laterality", "Left"), ("Contrast", "WithoutContrast"))
         })).Completed.ToString();
     }
@@ -89,6 +90,7 @@ public sealed class PriorAuthFlow(SampleClient client)
         return (await client.ExecuteAsync("radiology", new RadiologySteps.CaptureOutOfNetworkInfoStep
         {
             InformationRequestId = request.InformationRequestId,
+            ExchangeId = request.ExchangeId,
             Items = Answers.For(request, answers)
         })).Completed;
     }
@@ -101,6 +103,7 @@ public sealed class PriorAuthFlow(SampleClient client)
             (await client.ExecuteAsync("radiology", new RadiologySteps.CaptureClinicalInfoStep
             {
                 InformationRequestId = request.InformationRequestId,
+                ExchangeId = request.ExchangeId,
                 Items = Answers.For(request, ("ClinicalIndication", "Other"), ("XrayCompleted", "true"), ("RedFlags", "None"))
             })).Completed.ToString();
         }
@@ -118,6 +121,7 @@ public sealed class PriorAuthFlow(SampleClient client)
         return (await client.ExecuteAsync("radiology", new RadiologySteps.SubmitPriorAuthorizationStep
         {
             InformationRequestId = attestation.InformationRequestId,
+            ExchangeId = attestation.ExchangeId,
             Items = Answers.For(attestation, ("Attested", "true"))
         })).Completed;
     }

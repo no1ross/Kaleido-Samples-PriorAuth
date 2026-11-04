@@ -23,7 +23,14 @@
 ## UI dependencies
 - `npm audit` in `ui/` is kept at 0 (no1ross/Kaleido#97). Upgrade with versions published at least 7 days earlier (Dependabot's cooldown is 7 days); never `npm audit fix --force`. `npm install --before=<date>` re-resolves without picking a newer transitive release.
 - `package.json` `overrides` pin `vite` 7.3.7 and `@modelcontextprotocol/sdk` 1.32.1, the fixed versions that `@angular/build`/`@angular/cli` 21.2.28 depend on. **Remove both overrides when Angular is updated to 21.2.28 or later**: they would otherwise hold back the Vite and MCP SDK versions Angular asks for.
-- Security overrides (#20): `undici@6` 6.29.1 and `undici@7` 7.30.1 (`@angular/build` 21.2.28 still pins a vulnerable 7.x; also `jsdom`, `node-gyp`), `fast-uri@3` 3.1.9 (`ajv`), `body-parser@2` 2.4.0 (`express` under the MCP SDK). Remove each once its dependents ask for the fixed version or later. fast-uri 3.1.9 and body-parser 2.4.0 were taken under 7 days old: a one-time exception for these security fixes, approved by the maintainer.
+- Security overrides (#20): `undici@6` 6.29.1 and `undici@7` 7.30.1 (`@angular/build` 21.2.28 still pins a vulnerable 7.x; also `jsdom`, `node-gyp`), `fast-uri@3` 3.1.9 (`ajv`), `body-parser@2` 2.4.0 (`express` under the MCP SDK), `minimatch@10` 11.0.2 (GHSA-g3hv-75wg-m249; `@tufjs/models`, `ignore-walk`) and `glob@13` 14.0.3 (GHSA-3g3m-2fjr-6pw4; `@npmcli/package-json`, `cacache`), all under `@angular/cli`; no 10.x/13.x fix exists. Remove each once its dependents ask for the fixed version or later. fast-uri 3.1.9 and body-parser 2.4.0 were taken under 7 days old: a one-time exception for these security fixes, approved by the maintainer.
+
+## Local Kaleido source
+- `UseLocalKaleido=true` builds against the Kaleido repository next to this one instead of the packages. `Directory.Build.targets` turns each `Kaleido*` PackageReference into a ProjectReference to `$(KaleidoSourceRoot)<Name>\<Name>.csproj` (default `..\Kaleido\src\`). The consumer analyzers (KAL2xxx), which the `Kaleido` package brings through `Kaleido.Analyzers`, come from `..\Kaleido\tools\analyzers\Kaleido.Analyzers` as an Analyzer reference (`KaleidoAnalyzersProject`). A missing project fails the build with its path.
+- Three ways to switch, the last wins: copy `Kaleido.Local.props.example` to the untracked `Kaleido.Local.props` (the default; delete it to go back), the `UseLocalKaleido` environment variable, `-p:UseLocalKaleido=true|false`. After switching, VS needs a restore or reload of the projects.
+- `Kaleido.Samples.PriorAuth.Local.slnx` adds the Kaleido projects to the solution for browsing and debugging. Keep its sample projects in step with `Kaleido.Samples.PriorAuth.slnx`.
+- CI and containers always use the packages: `.dockerignore` keeps `Kaleido.Local.props` out of the images, and `../Kaleido` is outside their build context.
+- Local Kaleido can be ahead of `KaleidoVersion` (`Directory.Packages.props`). A build error then means the sample needs updating for the newer API; it is not caused by the switch.
 
 ## Local run workflow
 - Prefer the compose file under `compose/` (`docker-compose.yml`; `docker-compose.override.yml` is for local overrides and sets nothing by default): it runs the router and every service as Production. The UI is not in compose and the router neither serves nor proxies it: run it with `npm start` in `ui/` (or Start on the esproj) at `http://localhost:4200` (see [Configuration per environment](#configuration-per-environment))
@@ -34,8 +41,9 @@
   - `dotnet run --project src/Seeder/Kaleido.Samples.PriorAuth.Seeder.csproj -- --domains=ReferenceData,CodeSet,Configuration,ProviderSearch,MemberService`
 - Shared SQLite files live under `data/`
 - Compose mounts that host directory into service containers as `/app/data`
-- Runtime-created DBs like `eventcollector.db`, `intake.db`, `intake-process.db`, `radiology.db`, and `radiology-process.db` may appear in `data/` after services start
-- The `*-process.db` files are the Kaleido context stores (process state, idempotent results, event outbox). They are created with `EnsureCreated`, which never adds tables to an existing file: after a store schema change (e.g. the `OutboxEvents` table) delete them; they are recreated at startup
+- Runtime-created DBs like `eventcollector.db`, `intake.db`, `radiology.db`, `history.db` and every service's `{service}-process.db` may appear in `data/` after services start
+- The `*-process.db` files are the Kaleido stores (process state, idempotent results, event outbox), one per service: every service writes its events, a query-only one included (no1ross/Kaleido#552). `AddPriorAuthStores("{Service}Process")` (`src/Common/PriorAuthStores.cs`) registers them and a relay on that database that publishes its events to the EventCollector (`HttpEventPublisher`). Interim (#28): one shared database, `AddSqliteStores` (no1ross/Kaleido#558) and one relay host (#31) follow. The router keeps in-memory stores and no relay, so its `/health` is `Degraded` (`kaleido-outbox`) until it leaves Kaleido (#34)
+- They are created with `EnsureCreated`, which never adds tables to an existing file: after a store schema change (e.g. the Kaleido master upgrade, #22) delete them; they are recreated at startup
 - The services' own databases (`intake.db`, `radiology.db`, `history.db`) are created the same way: after an entity change, delete the affected file (and its `*-process.db`, so no process points at missing data)
 
 ## History records
@@ -94,7 +102,7 @@
 ## Sensitive data in events
 - Member fields are classified with `[Phi]` (name, display name, date of birth) and `[Pii]` (email, phone, address) from `src/Common/Compliance/PriorAuthDataClassifications.cs`.
 - Kaleido redacts classified values in event payloads before the outbox write ([ADR 0013](https://github.com/no1ross/Kaleido/blob/master/docs/decisions/0013-event-payloads-classified-and-redacted.md)); responses to callers keep the real values.
-- Every event-publishing service calls `AddPriorAuthEventRedaction()` (`src/Common/Compliance/PriorAuthEventRedaction.cs`): events keep PII and erase PHI. It is the event policy only (`AddEventRedaction`, ADR 0025); log redaction (`AddRedaction`) would be configured separately. To pseudonymize instead, map a classification to an HMAC or encrypting redactor there.
+- Every service calls `AddPriorAuthEventRedaction()` (`src/Common/Compliance/PriorAuthEventRedaction.cs`): events keep PII and erase PHI. It is the event policy only (`AddEventRedaction`, ADR 0025); log redaction (`AddRedaction`) would be configured separately. To pseudonymize instead, map a classification to an HMAC or encrypting redactor there.
 
 ## Configuration per environment
 - **Containers run as Production** (images are built `Release`; compose sets no `ASPNETCORE_ENVIRONMENT`), so they read only each host's `appsettings.json`: container addresses (`http://member:8080`, `http://eventcollector:8080`), `data/...` paths (`/app/data` in the container) and the dashboard's OTLP endpoint `http://aspire-dashboard:18889`. Swagger is Development-only, so it is off in containers.

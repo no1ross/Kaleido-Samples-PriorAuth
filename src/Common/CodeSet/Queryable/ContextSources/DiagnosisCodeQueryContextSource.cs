@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Kaleido.Samples.PriorAuth.CodeSet.Queryable.ContextSources;
 
 [QuerySource(
-    Version = "1.0.0",
     DisplayName = "Diagnosis Codes",
     Description = "Diagnosis codes, searchable by code and description.",
     Source = "Prior Authorization Code Set",

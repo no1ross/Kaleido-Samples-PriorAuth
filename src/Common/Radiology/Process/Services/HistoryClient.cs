@@ -70,13 +70,13 @@ public sealed class HistoryClient(
             throw new HistoryNotRecordedException($"History could not be reached: {ex.Message}", ex);
         }
 
-        if (response.Outcome != StepExecutionOutcome.Completed)
+        if (response.Status != StepExecutionStatus.Completed)
         {
             var reason = string.Join(" ", response.BusinessMessages.Concat(response.FrameworkMessages).Select(x => x.Message));
 
-            logger.LogError("History did not record process {ProcessId}: the upsert ended {Outcome}. {Reason}", processId, response.Outcome, reason);
+            logger.LogError("History did not record process {ProcessId}: the upsert ended {Status}. {Reason}", processId, response.Status, reason);
 
-            throw new HistoryNotRecordedException($"History did not record the change (outcome {response.Outcome}). {reason}".TrimEnd());
+            throw new HistoryNotRecordedException($"History did not record the change (status {response.Status}). {reason}".TrimEnd());
         }
     }
 }

@@ -80,6 +80,11 @@ process state, outbox and idempotency records in a `*-process.db`.
    the images restore with it as a build secret, never stored in an image. Building needs the .NET 9 SDK
    (`global.json`).
 
+   To build against a Kaleido checkout next to this repository (`..\Kaleido`) instead of the packages,
+   copy `Kaleido.Local.props.example` to `Kaleido.Local.props`, or pass `-p:UseLocalKaleido=true`. Open
+   `Kaleido.Samples.PriorAuth.Local.slnx` to see the Kaleido projects too. See `AGENTS.md`, "Local
+   Kaleido source".
+
 1. **Seed** the shared reference databases (once, and after reference data changes):
 
    ```powershell

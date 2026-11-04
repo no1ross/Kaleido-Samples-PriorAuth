@@ -8,8 +8,7 @@ namespace Kaleido.Samples.PriorAuth.Intake.Process.Steps;
 [ProcessStep(
     DisplayName = "Intake - Validate Member",
     Description = "Confirms that the selected member exists in the system. " +
-                  "Does not persist any data. Returns CaptureMember as the required next step.",
-    Version = "1.0.0")]
+                  "Does not persist any data. Returns CaptureMember as the required next step.")]
 // An entry point, like StartIntake and CaptureRequestedService: a caller may
 // begin an intake with any of the three.
 [AvailableUntil<CaptureMemberStep>]
