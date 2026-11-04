@@ -121,13 +121,15 @@ public sealed class CaptureRequestedServiceHandler(
                         },
                         cancellationToken);
 
-            if (downstreamResult.Outcome is StepExecutionOutcome.Failed or StepExecutionOutcome.Rejected)
+            // Kaleido refuses a hand-off with an answer whose step did not complete (pro_invalid_hand_off).
+            if (downstreamResult.Status != StepExecutionStatus.Completed)
             {
                 return ProcessStepHandlerResult.Reject(
                     downstreamResult.BusinessMessages.ToArray());
             }
 
-            return ProcessStepHandlerResult.HandOff(processorName);
+            // The hand-off answers with Radiology's next steps, so the caller continues there (#27).
+            return ProcessStepHandlerResult.HandOff(processorName, downstreamResult);
         }
         catch (KaleidoHttpClientException ex)
         {
